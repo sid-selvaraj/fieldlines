@@ -22,4 +22,24 @@ const essays = defineCollection({
   }),
 });
 
-export const collections = { research, essays };
+const journal = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/journal' }),
+  schema: z.object({
+    title: z.string(),
+    date: z.date(),
+    event: z.string(),
+    eventUrl: z.string().optional(),
+    location: z.string(),
+    award: z.string().optional(),
+    awardLevel: z.string().optional(),
+    category: z.string().optional(),
+    description: z.string(),
+    tags: z.array(z.string()),
+    heroImage: z.string().optional(),
+    images: z.array(z.string()).optional(),
+    pdfAttachment: z.string().optional(),
+    featured: z.boolean().default(false),
+  }),
+});
+
+export const collections = { research, essays, journal };

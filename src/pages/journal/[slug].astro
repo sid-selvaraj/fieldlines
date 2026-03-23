@@ -1,0 +1,356 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+const { slug } = Astro.params;
+const entries = await getCollection('journal');
+const entry = entries.find(e => e.id === slug);
+
+if (!entry) {
+  return Astro.redirect('/journal');
+}
+
+const { Content } = await render(entry);
+
+const {
+  title,
+  date,
+  event,
+  eventUrl,
+  location,
+  award,
+  awardLevel,
+  category,
+  description,
+  tags,
+  heroImage,
+  images,
+  pdfAttachment,
+} = entry.data;
+
+const formattedDate = date.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+const isISEF = tags.some(t => t.toUpperCase().includes('ISEF'));
+const extraImages = images && images.length > 1 ? images.slice(1) : [];
+---
+
+<Base title={title}>
+  <article>
+    <a href="/journal" class="back-link">← Field Journal</a>
+
+    {heroImage && (
+      <div class="hero-wrap">
+        <img src={heroImage} alt={title} class="hero-img" />
+      </div>
+    )}
+
+    <header class="post-header">
+      <div class="badge-row">
+        {eventUrl
+          ? <a href={eventUrl} class="badge-event" target="_blank" rel="noopener">{event}</a>
+          : <span class="badge-event">{event}</span>
+        }
+        {award && (
+          <span class="badge-award">{award}{awardLevel ? ` · ${awardLevel}` : ''}</span>
+        )}
+        {isISEF && (
+          <span class="badge-isef">ISEF Affiliated</span>
+        )}
+      </div>
+
+      <h1>{title}</h1>
+
+      <div class="post-meta">
+        <time datetime={date.toISOString()}>{formattedDate}</time>
+        <span class="dot">·</span>
+        <span>{location}</span>
+        {category && (
+          <>
+            <span class="dot">·</span>
+            <span>{category}</span>
+          </>
+        )}
+      </div>
+    </header>
+
+    {extraImages.length > 0 && (
+      <div class="photo-grid">
+        {extraImages.map(img => (
+          <img src={img} alt={title} class="photo-grid-img" />
+        ))}
+      </div>
+    )}
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    {pdfAttachment && (
+      <div class="pdf-card">
+        <div class="pdf-card-inner">
+          <div class="pdf-card-text">
+            <p class="pdf-card-title">Project poster</p>
+            <p class="pdf-card-desc">Download the full project poster as a PDF.</p>
+          </div>
+          <a href={pdfAttachment} class="pdf-download-btn" download>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download PDF
+          </a>
+        </div>
+      </div>
+    )}
+
+    <div class="tags-row">
+      {tags.map(tag => <span class="tag">{tag}</span>)}
+    </div>
+
+    <a href="/journal" class="back-link back-link-bottom">← Field Journal</a>
+  </article>
+</Base>
+
+<style>
+  article {
+    padding-top: 36px;
+    padding-bottom: 56px;
+  }
+
+  .back-link {
+    display: inline-block;
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    margin-bottom: 24px;
+  }
+
+  .back-link:hover {
+    color: var(--color-accent);
+  }
+
+  .hero-wrap {
+    margin-bottom: 28px;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .hero-img {
+    width: 100%;
+    max-height: 360px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .post-header {
+    margin-bottom: 28px;
+  }
+
+  .badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+
+  .badge-event {
+    font-size: 11px;
+    padding: 3px 10px;
+    background: #EEEDFE;
+    color: #7F77DD;
+    border-radius: 20px;
+    font-family: var(--font-sans);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  a.badge-event:hover {
+    background: #dddcfc;
+  }
+
+  .badge-award {
+    font-size: 11px;
+    padding: 3px 10px;
+    background: #EEEDFE;
+    color: #3C3489;
+    border-radius: 20px;
+    font-family: var(--font-sans);
+    white-space: nowrap;
+  }
+
+  .badge-isef {
+    font-size: 11px;
+    padding: 3px 10px;
+    background: #FEF3E2;
+    color: #92400E;
+    border: 1px solid #F59E0B;
+    border-radius: 20px;
+    font-family: var(--font-sans);
+    white-space: nowrap;
+  }
+
+  h1 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 1.25;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+  }
+
+  .post-meta {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    font-family: var(--font-sans);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .dot {
+    opacity: 0.4;
+  }
+
+  /* Photo grid */
+  .photo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+
+  .photo-grid-img {
+    width: 100%;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    border-radius: 8px;
+    display: block;
+  }
+
+  /* Prose */
+  .prose {
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--text-secondary);
+    margin-bottom: 32px;
+  }
+
+  .prose :global(p) {
+    margin-bottom: 1.2em;
+  }
+
+  .prose :global(h2) {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--text-primary);
+    margin: 1.8em 0 0.6em;
+  }
+
+  .prose :global(h3) {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--text-primary);
+    margin: 1.5em 0 0.5em;
+  }
+
+  /* Placeholder blocks — blockquotes starting with "Siddharth —" */
+  .prose :global(blockquote) {
+    background: #f7f6fe;
+    border-left: 3px solid #7F77DD;
+    border-radius: 0 8px 8px 0;
+    padding: 14px 18px;
+    margin: 1.4em 0;
+    font-style: italic;
+    color: #888;
+    font-size: 14px;
+    line-height: 1.7;
+    position: relative;
+  }
+
+  .prose :global(blockquote)::before {
+    content: '✏️ To be completed';
+    display: block;
+    font-size: 10px;
+    font-style: normal;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #7F77DD;
+    font-family: var(--font-sans);
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+
+  /* PDF attachment */
+  .pdf-card {
+    border: 1px solid var(--color-accent);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 28px;
+    background: var(--color-accent-light);
+  }
+
+  .pdf-card-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .pdf-card-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+  }
+
+  .pdf-card-desc {
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+
+  .pdf-download-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    background: var(--color-accent);
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .pdf-download-btn:hover {
+    opacity: 0.88;
+  }
+
+  /* Tags */
+  .tags-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 32px;
+  }
+
+  .back-link-bottom {
+    margin-bottom: 0;
+    margin-top: 8px;
+  }
+
+  @media (max-width: 580px) {
+    h1 {
+      font-size: 22px;
+    }
+
+    .photo-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

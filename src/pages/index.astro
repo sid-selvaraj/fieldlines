@@ -4,6 +4,10 @@ import ResearchCard from '../components/ResearchCard.astro';
 import PostCard from '../components/PostCard.astro';
 import { getCollection } from 'astro:content';
 
+const journal = await getCollection('journal');
+journal.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const latestJournal = journal[0];
+
 const research = await getCollection('research');
 const essays = await getCollection('essays');
 
@@ -99,6 +103,32 @@ const recentEntries: RecentEntry[] = [
       ))}
     </ol>
   </section>
+
+  <!-- Field Journal teaser -->
+  {latestJournal && (
+    <section class="journal-teaser">
+      <h2 class="section-label">Field Journal</h2>
+      <a href={`/journal/${latestJournal.id}`} class="journal-card">
+        {latestJournal.data.heroImage && (
+          <img
+            src={latestJournal.data.heroImage}
+            alt={latestJournal.data.title}
+            class="journal-thumb"
+          />
+        )}
+        <div class="journal-card-body">
+          <span class="journal-card-label">Field Journal</span>
+          <p class="journal-card-title">{latestJournal.data.title}</p>
+          <p class="journal-card-meta">
+            {latestJournal.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+          </p>
+          {latestJournal.data.award && (
+            <span class="journal-card-badge">{latestJournal.data.award}</span>
+          )}
+        </div>
+      </a>
+    </section>
+  )}
 
   <!-- Feynman quote -->
   <blockquote class="quote">
@@ -326,6 +356,76 @@ const recentEntries: RecentEntry[] = [
     color: var(--text-tertiary);
     white-space: nowrap;
     flex-shrink: 0;
+  }
+
+  /* Field Journal teaser */
+  .journal-teaser {
+    padding: 32px 0 8px;
+  }
+
+  .journal-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 16px;
+    border: 1px solid var(--border-card);
+    border-radius: 10px;
+    background: var(--card-bg);
+    text-decoration: none;
+    transition: border-color 0.15s;
+  }
+
+  .journal-card:hover {
+    border-color: var(--color-accent);
+  }
+
+  .journal-thumb {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .journal-card-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .journal-card-label {
+    font-size: 10px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    font-family: var(--font-sans);
+    font-weight: 500;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .journal-card-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1.4;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .journal-card-meta {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-bottom: 6px;
+  }
+
+  .journal-card-badge {
+    font-size: 11px;
+    padding: 2px 8px;
+    background: #EEEDFE;
+    color: #7F77DD;
+    border-radius: 10px;
   }
 
   /* Quote */
