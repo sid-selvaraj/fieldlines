@@ -23,3 +23,7 @@ This is an [Astro](https://astro.build) project using strict TypeScript.
 **Astro component syntax:** `.astro` files use a frontmatter fence (`---`) for server-side TypeScript/JavaScript, followed by HTML template markup. There is no client-side JS by default — interactivity requires explicit `client:*` directives.
 
 **TypeScript:** Configured with `astro/tsconfigs/strict`. Astro generates types in `.astro/types.d.ts`.
+
+## Repository
+
+This repo (`sid-selvaraj/fieldlines`) is **public**. Never commit WIP files, temp/debug scripts, or anything with sensitive content. Only commit polished, intentional changes.
