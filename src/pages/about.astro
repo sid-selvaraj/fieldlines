@@ -1,0 +1,159 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="About" description="About Siddharth Selvaraj, 9th-grade particle physics student in Edison, NJ.">
+  <div class="about">
+    <div class="profile">
+      <div class="avatar" aria-label="Photo placeholder — initials SS">SS</div>
+      <div class="profile-text">
+        <h1>Siddharth Selvaraj</h1>
+        <p class="location">9th grade · Edison, NJ</p>
+      </div>
+    </div>
+
+    <hr />
+
+    <section class="bio">
+      <p>
+        I'm a 9th-grade student in Edison, NJ with one obsession: understanding why the universe
+        is made of the particles it is, and not others. This site is my public research notebook —
+        I write about particle physics, build simulations, and document the questions I can't yet
+        answer. I update it as I learn.
+      </p>
+    </section>
+
+    <hr />
+
+    <section>
+      <h2>Interests</h2>
+      <ul>
+        <li>Particle physics</li>
+        <li>Quantum field theory</li>
+        <li>Mathematical physics</li>
+        <li>Computational simulations</li>
+      </ul>
+    </section>
+
+    <hr />
+
+    <section>
+      <h2>Currently reading</h2>
+      <p>Griffiths' <em>Introduction to Elementary Particles</em></p>
+    </section>
+
+    <hr />
+
+    <section>
+      <h2>Goal</h2>
+      <p>Working toward studying physics at Stanford University.</p>
+    </section>
+
+    <hr />
+
+    <section>
+      <h2>Links</h2>
+      <ul class="links">
+        <li>
+          <a href="https://github.com/" target="_blank" rel="noopener noreferrer">GitHub</a>
+        </li>
+      </ul>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .about {
+    max-width: 640px;
+  }
+
+  .profile {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-serif);
+    font-size: 1.4rem;
+    color: var(--color-text-secondary);
+    flex-shrink: 0;
+    letter-spacing: 0.05em;
+    user-select: none;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .location {
+    font-size: 0.85rem;
+    color: var(--color-text-tertiary);
+    font-family: var(--font-mono);
+    letter-spacing: 0.04em;
+  }
+
+  section {
+    margin-bottom: 0;
+  }
+
+  h2 {
+    font-size: 1rem;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-tertiary);
+    font-size: 0.72rem;
+    margin-bottom: 0.75rem;
+  }
+
+  p {
+    font-size: 0.95rem;
+    color: var(--color-text-secondary);
+    line-height: 1.75;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  ul li {
+    font-size: 0.95rem;
+    color: var(--color-text-secondary);
+    padding: 0.2rem 0 0.2rem 1.25rem;
+    position: relative;
+  }
+
+  ul li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--color-accent);
+    font-size: 0.9rem;
+  }
+
+  .links li::before {
+    content: '→';
+  }
+
+  .links a {
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .links a:hover {
+    text-decoration: underline;
+  }
+</style>

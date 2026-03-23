@@ -1,0 +1,47 @@
+---
+import Base from '../../layouts/Base.astro';
+import ResearchCard from '../../components/ResearchCard.astro';
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('research');
+posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<Base title="Research">
+  <div class="page-header">
+    <h1>Research Notes</h1>
+    <p>
+      Working notes, surveys, and in-progress investigations into particle physics and related
+      mathematics.
+    </p>
+  </div>
+
+  <div class="list">
+    {posts.map(post => (
+      <ResearchCard
+        title={post.data.title}
+        date={post.data.date}
+        status={post.data.status}
+        abstract={post.data.abstract}
+        tags={post.data.tags}
+        slug={post.id}
+      />
+    ))}
+  </div>
+</Base>
+
+<style>
+  .page-header {
+    margin-bottom: 2rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    color: var(--color-text-secondary);
+    max-width: 580px;
+  }
+</style>

@@ -1,0 +1,271 @@
+---
+import Base from '../layouts/Base.astro';
+import ResearchCard from '../components/ResearchCard.astro';
+import PostCard from '../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+
+const research = await getCollection('research');
+const essays = await getCollection('essays');
+
+research.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+essays.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const latestResearch = research[0];
+const latestEssay = essays[0];
+
+type RecentEntry = {
+  type: 'research' | 'essay';
+  title: string;
+  date: Date;
+  slug: string;
+};
+
+const recentEntries: RecentEntry[] = [
+  ...research.map(r => ({ type: 'research' as const, title: r.data.title, date: r.data.date, slug: r.id })),
+  ...essays.map(e => ({ type: 'essay' as const, title: e.data.title, date: e.data.date, slug: e.id })),
+]
+  .sort((a, b) => b.date.valueOf() - a.date.valueOf())
+  .slice(0, 5);
+---
+
+<Base title="Home">
+  <!-- Hero -->
+  <section class="hero">
+    <h1>Siddharth Selvaraj</h1>
+    <p class="identity">9th grade · Edison, NJ</p>
+    <p class="tagline">"Exploring the fabric of reality, one field line at a time."</p>
+    <p class="sub-copy">
+      I'm a high school student fascinated by particle physics and the mathematics that underpins
+      the universe. This is where I document my research, ideas, and simulations.
+    </p>
+  </section>
+
+  <hr />
+
+  <!-- Featured two-column -->
+  <section class="featured">
+    <div class="featured-col">
+      <h2 class="section-label">Latest Research</h2>
+      {latestResearch && (
+        <ResearchCard
+          title={latestResearch.data.title}
+          date={latestResearch.data.date}
+          status={latestResearch.data.status}
+          abstract={latestResearch.data.abstract}
+          tags={latestResearch.data.tags}
+          slug={latestResearch.id}
+        />
+      )}
+      <a href="/research" class="see-all">All research notes →</a>
+    </div>
+    <div class="featured-col">
+      <h2 class="section-label">Latest Essay</h2>
+      {latestEssay && (
+        <PostCard
+          title={latestEssay.data.title}
+          date={latestEssay.data.date}
+          readTime={latestEssay.data.readTime}
+          tags={latestEssay.data.tags}
+          slug={latestEssay.id}
+        />
+      )}
+      <a href="/essays" class="see-all">All essays →</a>
+    </div>
+  </section>
+
+  <hr />
+
+  <!-- Numbered recent entries -->
+  <section class="recent">
+    <h2 class="section-label">Recent entries</h2>
+    <ol class="entries-list">
+      {recentEntries.map(entry => (
+        <li>
+          <a href={`/${entry.type === 'research' ? 'research' : 'essays'}/${entry.slug}`}>
+            {entry.title}
+          </a>
+          <span class="entry-meta">
+            <span class="entry-type">{entry.type}</span>
+            <span class="entry-date">
+              {entry.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+            </span>
+          </span>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <hr />
+
+  <!-- Feynman quote -->
+  <blockquote class="quote">
+    <p>
+      "The first principle is that you must not fool yourself — and you are the easiest person to
+      fool."
+    </p>
+    <footer>— Richard Feynman · A guiding principle for this site</footer>
+  </blockquote>
+</Base>
+
+<style>
+  .hero {
+    padding: 3rem 0 2rem;
+  }
+
+  .hero h1 {
+    font-size: 2.75rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .identity {
+    font-size: 0.85rem;
+    color: var(--color-text-tertiary);
+    font-family: var(--font-mono);
+    letter-spacing: 0.05em;
+    margin-bottom: 1.5rem;
+  }
+
+  .tagline {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1.25rem;
+    color: var(--color-text-primary);
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+
+  .sub-copy {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+    max-width: 580px;
+    line-height: 1.75;
+  }
+
+  .section-label {
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-tertiary);
+    margin-bottom: 0.25rem;
+  }
+
+  .featured {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+  }
+
+  .see-all {
+    display: inline-block;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .see-all:hover {
+    text-decoration: underline;
+  }
+
+  .recent {
+    margin-bottom: 0.5rem;
+  }
+
+  .entries-list {
+    list-style: none;
+    counter-reset: entries;
+    margin-top: 1rem;
+  }
+
+  .entries-list li {
+    counter-increment: entries;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.65rem 0 0.65rem 2.25rem;
+    border-bottom: 1px solid var(--color-border);
+    position: relative;
+  }
+
+  .entries-list li::before {
+    content: counter(entries, decimal-leading-zero);
+    position: absolute;
+    left: 0;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--color-text-tertiary);
+    top: 0.7rem;
+  }
+
+  .entries-list a {
+    font-size: 0.95rem;
+    color: var(--color-text-primary);
+    text-decoration: none;
+    flex: 1;
+    line-height: 1.4;
+  }
+
+  .entries-list a:hover {
+    color: var(--color-accent);
+  }
+
+  .entry-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-shrink: 0;
+  }
+
+  .entry-type {
+    font-size: 0.68rem;
+    font-family: var(--font-mono);
+    color: var(--color-text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .entry-date {
+    font-size: 0.78rem;
+    color: var(--color-text-tertiary);
+    white-space: nowrap;
+  }
+
+  .quote {
+    border-left: 3px solid var(--color-accent);
+    padding: 0.75rem 1.5rem;
+    margin: 0;
+  }
+
+  .quote p {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1.2rem;
+    color: var(--color-text-primary);
+    line-height: 1.6;
+    margin-bottom: 0.6rem;
+  }
+
+  .quote footer {
+    font-size: 0.825rem;
+    color: var(--color-text-tertiary);
+    font-family: var(--font-sans);
+  }
+
+  @media (max-width: 680px) {
+    .hero h1 {
+      font-size: 2rem;
+    }
+
+    .featured {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+
+    .entry-meta {
+      display: none;
+    }
+  }
+</style>

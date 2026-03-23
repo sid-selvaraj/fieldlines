@@ -1,0 +1,56 @@
+---
+import Base from '../../layouts/Base.astro';
+import SimCard from '../../components/SimCard.astro';
+
+const simulations = [
+  {
+    title: 'Double-Slit Experiment',
+    description:
+      'Interactive wave-particle duality simulation with adjustable slit separation and wavelength.',
+    href: '/simulations/double-slit',
+  },
+  {
+    title: 'Electric Field Visualizer',
+    description: 'Place charges and watch field lines emerge in real time.',
+    href: '/simulations/electric-field',
+  },
+];
+---
+
+<Base title="Simulations">
+  <div class="page-header">
+    <h1>Simulations</h1>
+    <p>
+      Interactive physics simulations built to develop intuition about quantum and classical
+      phenomena.
+    </p>
+  </div>
+
+  <div class="grid">
+    {simulations.map(sim => (
+      <SimCard title={sim.title} description={sim.description} href={sim.href} />
+    ))}
+  </div>
+</Base>
+
+<style>
+  .page-header {
+    margin-bottom: 2.5rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    color: var(--color-text-secondary);
+    max-width: 580px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+</style>

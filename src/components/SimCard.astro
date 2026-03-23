@@ -1,0 +1,69 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  href: string;
+  status?: string;
+}
+
+const { title, description, href, status = 'Coming Soon' } = Astro.props;
+---
+
+<a href={href} class="sim-card">
+  <div class="preview">
+    <span class="status-label">{status}</span>
+  </div>
+  <div class="body">
+    <h3>{title}</h3>
+    <p>{description}</p>
+  </div>
+</a>
+
+<style>
+  .sim-card {
+    display: block;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    overflow: hidden;
+    text-decoration: none;
+    transition: border-color 0.15s;
+  }
+
+  .sim-card:hover {
+    border-color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .preview {
+    height: 140px;
+    background: var(--color-bg-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .status-label {
+    font-size: 0.7rem;
+    font-family: var(--font-mono);
+    color: var(--color-text-tertiary);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .body {
+    padding: 1.25rem;
+  }
+
+  h3 {
+    font-size: 1.05rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-text-primary);
+  }
+
+  p {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+  }
+</style>

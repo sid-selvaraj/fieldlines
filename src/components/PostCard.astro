@@ -1,0 +1,73 @@
+---
+interface Props {
+  title: string;
+  date: Date;
+  readTime: number;
+  tags: string[];
+  slug: string;
+}
+
+const { title, date, readTime, tags, slug } = Astro.props;
+
+const formattedDate = date.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+---
+
+<article>
+  <div class="meta">
+    <time datetime={date.toISOString()}>{formattedDate}</time>
+    <span class="dot">·</span>
+    <span>{readTime} min read</span>
+  </div>
+  <h3>
+    <a href={`/essays/${slug}`}>{title}</a>
+  </h3>
+  <div class="tags">
+    {tags.map(tag => <span class="tag">{tag}</span>)}
+  </div>
+</article>
+
+<style>
+  article {
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .meta {
+    font-size: 0.8rem;
+    color: var(--color-text-tertiary);
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .dot {
+    color: var(--color-border);
+  }
+
+  h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  h3 a {
+    color: var(--color-text-primary);
+    text-decoration: none;
+  }
+
+  h3 a:hover {
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+  }
+</style>
