@@ -1,0 +1,328 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const entries = await getCollection('journal');
+entries.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const featured = entries.filter(e => e.data.featured);
+const rest = entries.filter(e => !e.data.featured);
+
+function formatDate(date: Date) {
+  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+function isISEF(tags: string[]) {
+  return tags.some(t => t.toUpperCase().includes('ISEF'));
+}
+---
+
+<Base title="Field Journal">
+  <div class="page-header">
+    <p class="eyebrow">Field Journal</p>
+    <h1>Physics in the wild.</h1>
+    <p class="desc">
+      A record of science fairs, competitions, lab visits, and experiments — the moments where
+      curiosity meets the real world.
+    </p>
+  </div>
+
+  {featured.length > 0 && (
+    <section class="featured-section">
+      <h2 class="section-label">Featured</h2>
+      {featured.map(entry => (
+        <div class="featured-card">
+          {entry.data.heroImage && (
+            <img
+              src={entry.data.heroImage}
+              alt={entry.data.title}
+              class="featured-hero"
+            />
+          )}
+          <div class="featured-body">
+            <div class="badge-row">
+              <span class="badge-event">{entry.data.event}</span>
+              {entry.data.award && (
+                <span class="badge-award">{entry.data.award}{entry.data.awardLevel ? ` · ${entry.data.awardLevel}` : ''}</span>
+              )}
+              {isISEF(entry.data.tags) && (
+                <span class="badge-isef">ISEF Affiliated</span>
+              )}
+            </div>
+            <p class="meta">
+              <time>{formatDate(entry.data.date)}</time>
+              <span class="dot">·</span>
+              <span>{entry.data.location}</span>
+            </p>
+            <h3 class="featured-title">
+              <a href={`/journal/${entry.id}`}>{entry.data.title}</a>
+            </h3>
+            <p class="featured-desc">{entry.data.description}</p>
+            <div class="tags-row">
+              {entry.data.tags.map(tag => <span class="tag">{tag}</span>)}
+            </div>
+            <div class="featured-actions">
+              <a href={`/journal/${entry.id}`} class="read-link">Read entry →</a>
+              {entry.data.pdfAttachment && (
+                <a href={entry.data.pdfAttachment} class="pdf-link" download>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Download poster (PDF)
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
+      ))}
+    </section>
+  )}
+
+  {rest.length > 0 && (
+    <section class="all-section">
+      <h2 class="section-label">All Entries</h2>
+      <div class="entries-grid">
+        {rest.map(entry => (
+          <a href={`/journal/${entry.id}`} class="entry-card">
+            {entry.data.heroImage && (
+              <img src={entry.data.heroImage} alt={entry.data.title} class="entry-thumb" />
+            )}
+            <div class="entry-body">
+              <div class="badge-row">
+                {entry.data.award && <span class="badge-award">{entry.data.award}</span>}
+                {isISEF(entry.data.tags) && <span class="badge-isef">ISEF Affiliated</span>}
+              </div>
+              <p class="entry-title">{entry.data.title}</p>
+              <p class="entry-meta">
+                <time>{formatDate(entry.data.date)}</time>
+                <span class="dot">·</span>
+                <span>{entry.data.location}</span>
+              </p>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+  )}
+</Base>
+
+<style>
+  .page-header {
+    padding-top: 40px;
+    margin-bottom: 36px;
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    font-weight: 500;
+    font-family: var(--font-sans);
+    margin-bottom: 10px;
+  }
+
+  h1 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 28px;
+    font-weight: 400;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+    line-height: 1.2;
+  }
+
+  .desc {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    max-width: 520px;
+  }
+
+  /* Featured card */
+  .featured-section {
+    margin-bottom: 48px;
+  }
+
+  .featured-card {
+    border: 1px solid var(--border-card);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--card-bg);
+  }
+
+  .featured-hero {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+    border-radius: 8px 8px 0 0;
+  }
+
+  .featured-body {
+    padding: 20px 24px 24px;
+  }
+
+  .badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .badge-event {
+    font-size: 11px;
+    padding: 3px 10px;
+    background: #EEEDFE;
+    color: #7F77DD;
+    border-radius: 20px;
+    font-family: var(--font-sans);
+    white-space: nowrap;
+  }
+
+  .badge-award {
+    font-size: 11px;
+    padding: 3px 10px;
+    background: #EEEDFE;
+    color: #3C3489;
+    border-radius: 20px;
+    font-family: var(--font-sans);
+    white-space: nowrap;
+  }
+
+  .badge-isef {
+    font-size: 11px;
+    padding: 3px 10px;
+    background: #FEF3E2;
+    color: #92400E;
+    border: 1px solid #F59E0B;
+    border-radius: 20px;
+    font-family: var(--font-sans);
+    white-space: nowrap;
+  }
+
+  .meta {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .dot {
+    opacity: 0.4;
+  }
+
+  .featured-title {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 1.3;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+  }
+
+  .featured-title a {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .featured-title a:hover {
+    color: var(--color-accent);
+  }
+
+  .featured-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 14px;
+  }
+
+  .tags-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+
+  .featured-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .read-link {
+    font-size: 13px;
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .read-link:hover {
+    text-decoration: underline;
+  }
+
+  .pdf-link {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .pdf-link:hover {
+    color: var(--color-accent);
+  }
+
+  /* All entries grid */
+  .entries-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .entry-card {
+    border: 1px solid var(--border-card);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--card-bg);
+    text-decoration: none;
+    transition: border-color 0.15s;
+  }
+
+  .entry-card:hover {
+    border-color: var(--color-accent);
+  }
+
+  .entry-thumb {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .entry-body {
+    padding: 14px 16px;
+  }
+
+  .entry-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1.4;
+    margin-bottom: 6px;
+  }
+
+  .entry-meta {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  @media (max-width: 580px) {
+    .entries-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
