@@ -26,7 +26,7 @@ import Base from '../layouts/Base.astro';
     <hr />
 
     <section>
-      <h2>Interests</h2>
+      <h2 class="section-label">Interests</h2>
       <ul>
         <li>Particle physics</li>
         <li>Quantum field theory</li>
@@ -38,21 +38,21 @@ import Base from '../layouts/Base.astro';
     <hr />
 
     <section>
-      <h2>Currently reading</h2>
+      <h2 class="section-label">Currently reading</h2>
       <p>Griffiths' <em>Introduction to Elementary Particles</em></p>
     </section>
 
     <hr />
 
     <section>
-      <h2>Goal</h2>
+      <h2 class="section-label">Goal</h2>
       <p>Working toward studying physics at Stanford University.</p>
     </section>
 
     <hr />
 
     <section>
-      <h2>Links</h2>
+      <h2 class="section-label">Links</h2>
       <ul class="links">
         <li>
           <a href="https://github.com/" target="_blank" rel="noopener noreferrer">GitHub</a>
@@ -64,7 +64,9 @@ import Base from '../layouts/Base.astro';
 
 <style>
   .about {
-    max-width: 640px;
+    max-width: 600px;
+    padding-top: 40px;
+    padding-bottom: 48px;
   }
 
   .profile {
@@ -75,52 +77,48 @@ import Base from '../layouts/Base.astro';
   }
 
   .avatar {
-    width: 80px;
-    height: 80px;
+    width: 72px;
+    height: 72px;
     border-radius: 50%;
-    background: var(--color-bg-secondary);
-    border: 1px solid var(--color-border);
+    background: var(--color-accent-light);
+    border: 1px solid var(--border-card);
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: var(--font-serif);
-    font-size: 1.4rem;
-    color: var(--color-text-secondary);
+    font-size: 1.2rem;
+    color: var(--color-accent);
     flex-shrink: 0;
     letter-spacing: 0.05em;
     user-select: none;
   }
 
   h1 {
-    font-size: 1.75rem;
-    margin-bottom: 0.3rem;
+    font-size: 22px;
+    margin-bottom: 4px;
+    color: var(--text-primary);
   }
 
   .location {
-    font-size: 0.85rem;
-    color: var(--color-text-tertiary);
+    font-size: 12px;
+    color: var(--text-tertiary);
     font-family: var(--font-mono);
     letter-spacing: 0.04em;
+    line-height: 1;
   }
 
   section {
     margin-bottom: 0;
   }
 
-  h2 {
-    font-size: 1rem;
-    font-family: var(--font-sans);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--color-text-tertiary);
-    font-size: 0.72rem;
-    margin-bottom: 0.75rem;
+  /* Override section-label ::after margin for about page sections */
+  section .section-label::after {
+    margin-bottom: 12px;
   }
 
   p {
-    font-size: 0.95rem;
-    color: var(--color-text-secondary);
+    font-size: 14px;
+    color: var(--text-secondary);
     line-height: 1.75;
   }
 
@@ -130,8 +128,8 @@ import Base from '../layouts/Base.astro';
   }
 
   ul li {
-    font-size: 0.95rem;
-    color: var(--color-text-secondary);
+    font-size: 14px;
+    color: var(--text-secondary);
     padding: 0.2rem 0 0.2rem 1.25rem;
     position: relative;
   }

@@ -26,6 +26,7 @@ const simulations = [
     </p>
   </div>
 
+  <h2 class="section-label">All Simulations</h2>
   <div class="grid">
     {simulations.map(sim => (
       <SimCard title={sim.title} description={sim.description} href={sim.href} />
@@ -35,22 +36,27 @@ const simulations = [
 
 <style>
   .page-header {
-    margin-bottom: 2.5rem;
+    padding-top: 40px;
+    margin-bottom: 32px;
   }
 
   h1 {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
+    font-size: 28px;
+    margin-bottom: 8px;
+    color: var(--text-primary);
   }
 
   p {
-    color: var(--color-text-secondary);
-    max-width: 580px;
+    font-size: 14px;
+    color: var(--text-secondary);
+    max-width: 520px;
+    line-height: 1.6;
   }
 
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.5rem;
+    gap: 16px;
+    padding-bottom: 48px;
   }
 </style>

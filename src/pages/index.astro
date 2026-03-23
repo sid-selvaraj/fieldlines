@@ -31,16 +31,21 @@ const recentEntries: RecentEntry[] = [
 <Base title="Home">
   <!-- Hero -->
   <section class="hero">
-    <h1>Siddharth Selvaraj</h1>
-    <p class="identity">9th grade · Edison, NJ</p>
-    <p class="tagline">"Exploring the fabric of reality, one field line at a time."</p>
-    <p class="sub-copy">
-      I'm a high school student fascinated by particle physics and the mathematics that underpins
-      the universe. This is where I document my research, ideas, and simulations.
-    </p>
+    <canvas id="particle-canvas"></canvas>
+    <div class="hero-inner">
+      <p class="eyebrow">Particle Physics · Edison, NJ</p>
+      <h1>Siddharth Selvaraj</h1>
+      <p class="sub-text">
+        I'm a high school student fascinated by particle physics and the mathematics that underpins
+        the universe. This is where I document my research, ideas, and simulations.
+      </p>
+      <div class="hero-tags">
+        <span class="hero-tag">9th Grade</span>
+        <span class="hero-tag">Quantum Mechanics</span>
+        <span class="hero-tag">Standard Model</span>
+      </div>
+    </div>
   </section>
-
-  <hr />
 
   <!-- Featured two-column -->
   <section class="featured">
@@ -73,29 +78,27 @@ const recentEntries: RecentEntry[] = [
     </div>
   </section>
 
-  <hr />
-
-  <!-- Numbered recent entries -->
+  <!-- Recent entries -->
   <section class="recent">
     <h2 class="section-label">Recent entries</h2>
     <ol class="entries-list">
-      {recentEntries.map(entry => (
+      {recentEntries.map((entry, i) => (
         <li>
-          <a href={`/${entry.type === 'research' ? 'research' : 'essays'}/${entry.slug}`}>
+          <span class="entry-num">{String(i + 1).padStart(2, '0')}</span>
+          <a
+            class="entry-title"
+            href={`/${entry.type === 'research' ? 'research' : 'essays'}/${entry.slug}`}
+          >
             {entry.title}
           </a>
-          <span class="entry-meta">
-            <span class="entry-type">{entry.type}</span>
-            <span class="entry-date">
-              {entry.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
-            </span>
+          <span class="entry-type-tag">{entry.type}</span>
+          <span class="entry-date">
+            {entry.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
           </span>
         </li>
       ))}
     </ol>
   </section>
-
-  <hr />
 
   <!-- Feynman quote -->
   <blockquote class="quote">
@@ -107,60 +110,160 @@ const recentEntries: RecentEntry[] = [
   </blockquote>
 </Base>
 
+<script>
+  const canvas = document.getElementById('particle-canvas') as HTMLCanvasElement | null;
+  if (canvas) {
+    const ctx = canvas.getContext('2d')!;
+    let particles: { x: number; y: number; vx: number; vy: number }[] = [];
+
+    function resize() {
+      const hero = canvas!.parentElement!;
+      canvas!.width = hero.offsetWidth;
+      canvas!.height = hero.offsetHeight;
+    }
+
+    function initParticles() {
+      particles = Array.from({ length: 22 }, () => {
+        const angle = Math.random() * Math.PI * 2;
+        return {
+          x: Math.random() * canvas!.width,
+          y: Math.random() * canvas!.height,
+          vx: Math.cos(angle) * 0.4,
+          vy: Math.sin(angle) * 0.4,
+        };
+      });
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas!.width, canvas!.height);
+
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > canvas!.width) p.vx *= -1;
+        if (p.y < 0 || p.y > canvas!.height) p.vy *= -1;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(127,119,221,0.5)';
+        ctx.fill();
+
+        for (let j = i + 1; j < particles.length; j++) {
+          const q = particles[j];
+          const dx = p.x - q.x;
+          const dy = p.y - q.y;
+          if (dx * dx + dy * dy < 110 * 110) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(q.x, q.y);
+            ctx.strokeStyle = 'rgba(127,119,221,0.18)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+        }
+      }
+
+      requestAnimationFrame(draw);
+    }
+
+    resize();
+    initParticles();
+    draw();
+
+    window.addEventListener('resize', () => {
+      resize();
+      initParticles();
+    });
+  }
+</script>
+
 <style>
+  /* Hero — full-bleed breakout from main container */
   .hero {
-    padding: 3rem 0 2rem;
+    background: var(--hero-bg);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
   }
 
-  .hero h1 {
-    font-size: 2.75rem;
-    margin-bottom: 0.35rem;
+  #particle-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
   }
 
-  .identity {
-    font-size: 0.85rem;
-    color: var(--color-text-tertiary);
-    font-family: var(--font-mono);
-    letter-spacing: 0.05em;
-    margin-bottom: 1.5rem;
+  .hero-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 56px 40px 48px;
   }
 
-  .tagline {
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-size: 1.25rem;
-    color: var(--color-text-primary);
-    line-height: 1.5;
-    margin-bottom: 1rem;
-  }
-
-  .sub-copy {
-    font-size: 1rem;
-    color: var(--color-text-secondary);
-    max-width: 580px;
-    line-height: 1.75;
-  }
-
-  .section-label {
-    font-family: var(--font-sans);
-    font-size: 0.7rem;
-    font-weight: 600;
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--color-text-tertiary);
-    margin-bottom: 0.25rem;
+    color: var(--color-accent);
+    font-weight: 500;
+    margin-bottom: 16px;
+    line-height: 1;
+    font-family: var(--font-sans);
   }
 
+  .hero-inner h1 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 38px;
+    font-weight: 400;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    max-width: 480px;
+    margin-bottom: 16px;
+  }
+
+  .sub-text {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    max-width: 420px;
+    margin-bottom: 28px;
+  }
+
+  .hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .hero-tag {
+    border: 1px solid var(--border-card);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 11px;
+    color: var(--text-tertiary);
+    background: var(--page-bg);
+    font-family: var(--font-sans);
+  }
+
+  /* Featured */
   .featured {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 3rem;
+    padding: 40px 0 8px;
   }
 
   .see-all {
     display: inline-block;
-    margin-top: 0.75rem;
-    font-size: 0.85rem;
+    margin-top: 12px;
+    font-size: 12px;
     color: var(--color-accent);
     text-decoration: none;
   }
@@ -169,94 +272,93 @@ const recentEntries: RecentEntry[] = [
     text-decoration: underline;
   }
 
+  /* Recent entries */
   .recent {
-    margin-bottom: 0.5rem;
+    padding: 32px 0 8px;
   }
 
   .entries-list {
     list-style: none;
-    counter-reset: entries;
-    margin-top: 1rem;
   }
 
   .entries-list li {
-    counter-increment: entries;
     display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 0.75rem;
-    padding: 0.65rem 0 0.65rem 2.25rem;
-    border-bottom: 1px solid var(--color-border);
-    position: relative;
+    align-items: center;
+    gap: 16px;
+    padding: 13px 0;
+    border-bottom: 1px solid #f0f0ec;
   }
 
-  .entries-list li::before {
-    content: counter(entries, decimal-leading-zero);
-    position: absolute;
-    left: 0;
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    color: var(--color-text-tertiary);
-    top: 0.7rem;
-  }
-
-  .entries-list a {
-    font-size: 0.95rem;
-    color: var(--color-text-primary);
-    text-decoration: none;
-    flex: 1;
-    line-height: 1.4;
-  }
-
-  .entries-list a:hover {
+  .entries-list li:hover .entry-title {
     color: var(--color-accent);
   }
 
-  .entry-meta {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
+  .entry-num {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    min-width: 20px;
+    font-variant-numeric: tabular-nums;
+    font-family: var(--font-mono);
     flex-shrink: 0;
   }
 
-  .entry-type {
-    font-size: 0.68rem;
-    font-family: var(--font-mono);
-    color: var(--color-text-tertiary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+  .entry-title {
+    font-size: 13px;
+    color: var(--text-secondary);
+    flex: 1;
+    line-height: 1.4;
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .entry-type-tag {
+    font-size: 11px;
+    padding: 2px 8px;
+    background: #EEEDFE;
+    color: #7F77DD;
+    border-radius: 10px;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .entry-date {
-    font-size: 0.78rem;
-    color: var(--color-text-tertiary);
+    font-size: 11px;
+    color: var(--text-tertiary);
     white-space: nowrap;
+    flex-shrink: 0;
   }
 
+  /* Quote */
   .quote {
     border-left: 3px solid var(--color-accent);
-    padding: 0.75rem 1.5rem;
-    margin: 0;
+    padding: 16px 20px;
+    background: var(--color-accent-light);
+    border-radius: 0 8px 8px 0;
+    margin-top: 40px;
+    margin-bottom: 48px;
   }
 
   .quote p {
-    font-family: var(--font-serif);
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.7;
     font-style: italic;
-    font-size: 1.2rem;
-    color: var(--color-text-primary);
-    line-height: 1.6;
-    margin-bottom: 0.6rem;
+    margin-bottom: 8px;
   }
 
   .quote footer {
-    font-size: 0.825rem;
-    color: var(--color-text-tertiary);
-    font-family: var(--font-sans);
+    font-size: 11px;
+    color: var(--text-tertiary);
   }
 
   @media (max-width: 680px) {
-    .hero h1 {
-      font-size: 2rem;
+    .hero-inner {
+      padding: 40px 24px 36px;
+    }
+
+    .hero-inner h1 {
+      font-size: 28px;
     }
 
     .featured {
@@ -264,7 +366,8 @@ const recentEntries: RecentEntry[] = [
       gap: 0;
     }
 
-    .entry-meta {
+    .entry-type-tag,
+    .entry-date {
       display: none;
     }
   }
