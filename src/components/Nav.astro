@@ -1,0 +1,104 @@
+---
+const navLinks = [
+  { href: '/research', label: 'Research' },
+  { href: '/essays', label: 'Essays' },
+  { href: '/simulations', label: 'Simulations' },
+  { href: '/about', label: 'About' },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<header>
+  <nav>
+    <a href="/" class="logo">
+      Siddharth Selvaraj <span class="divider">·</span> Field Lines
+    </a>
+    <ul>
+      {navLinks.map(link => (
+        <li>
+          <a
+            href={link.href}
+            class:list={[{ active: currentPath === link.href || currentPath.startsWith(link.href + '/') }]}
+          >
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+</header>
+
+<style>
+  header {
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-bg);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  nav {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .logo {
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    color: var(--color-text-primary);
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .logo:hover {
+    text-decoration: none;
+    color: var(--color-text-primary);
+  }
+
+  .divider {
+    color: var(--color-text-tertiary);
+    margin: 0 0.15em;
+  }
+
+  ul {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+    flex-shrink: 0;
+  }
+
+  ul a {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+  }
+
+  ul a:hover,
+  ul a.active {
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  @media (max-width: 580px) {
+    .logo {
+      font-size: 0.85rem;
+    }
+
+    ul {
+      gap: 1.25rem;
+    }
+
+    ul a {
+      font-size: 0.8rem;
+    }
+  }
+</style>

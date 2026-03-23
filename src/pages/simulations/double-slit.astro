@@ -1,0 +1,72 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+
+<Base title="Double-Slit Experiment">
+  <article>
+    <a href="/simulations" class="back">← Simulations</a>
+    <h1>Double-Slit Experiment</h1>
+    <p class="desc">
+      Interactive wave-particle duality simulation with adjustable slit separation and wavelength.
+    </p>
+    <hr />
+    <div class="placeholder">
+      <p class="label">Simulation in progress</p>
+      <p class="note">
+        I'm building a Canvas-based implementation of the double-slit interference pattern. The
+        plan is to allow real-time adjustment of slit width, slit separation, and incident
+        wavelength, and to visualize both the wave function and the probability distribution on the
+        detector screen.
+      </p>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .back {
+    display: inline-block;
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 1.5rem;
+    text-decoration: none;
+  }
+
+  .back:hover {
+    color: var(--color-accent);
+  }
+
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .desc {
+    color: var(--color-text-secondary);
+    max-width: 520px;
+  }
+
+  .placeholder {
+    background: var(--color-bg-secondary);
+    border: 1px dashed var(--color-border);
+    border-radius: 4px;
+    padding: 3.5rem 2rem;
+    text-align: center;
+  }
+
+  .label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+  }
+
+  .note {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    max-width: 460px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+</style>

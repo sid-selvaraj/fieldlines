@@ -1,0 +1,85 @@
+---
+interface Props {
+  title: string;
+  date: Date;
+  status: 'Draft' | 'In Progress' | 'Published';
+  abstract: string;
+  tags: string[];
+  slug: string;
+}
+
+const { title, date, status, abstract, tags, slug } = Astro.props;
+
+const formattedDate = date.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+const badgeClass = {
+  'Draft': 'badge-draft',
+  'In Progress': 'badge-in-progress',
+  'Published': 'badge-published',
+}[status];
+---
+
+<article>
+  <div class="header">
+    <span class={`badge ${badgeClass}`}>{status}</span>
+    <time datetime={date.toISOString()}>{formattedDate}</time>
+  </div>
+  <h3>
+    <a href={`/research/${slug}`}>{title}</a>
+  </h3>
+  <p class="abstract">{abstract}</p>
+  <div class="tags">
+    {tags.map(tag => <span class="tag">{tag}</span>)}
+  </div>
+</article>
+
+<style>
+  article {
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  time {
+    font-size: 0.8rem;
+    color: var(--color-text-tertiary);
+  }
+
+  h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  h3 a {
+    color: var(--color-text-primary);
+    text-decoration: none;
+  }
+
+  h3 a:hover {
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .abstract {
+    font-size: 0.9rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+</style>
