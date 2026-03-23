@@ -11,12 +11,13 @@ const { title, date, readTime, tags, slug } = Astro.props;
 
 const formattedDate = date.toLocaleDateString('en-US', {
   year: 'numeric',
-  month: 'long',
+  month: 'short',
   day: 'numeric',
 });
 ---
 
 <article>
+  <div class="card-type">Essay</div>
   <div class="meta">
     <time datetime={date.toISOString()}>{formattedDate}</time>
     <span class="dot">·</span>
@@ -32,42 +33,63 @@ const formattedDate = date.toLocaleDateString('en-US', {
 
 <style>
   article {
-    padding: 1.5rem 0;
-    border-bottom: 1px solid var(--color-border);
+    background: var(--card-bg);
+    border: 1px solid var(--border-card);
+    border-left: 3px solid transparent;
+    border-radius: 10px;
+    padding: 20px;
+    transition: border-color 0.15s;
+    margin-bottom: 12px;
+  }
+
+  article:hover {
+    border-left-color: var(--color-accent);
+  }
+
+  .card-type {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: 8px;
+    font-family: var(--font-sans);
+    font-weight: 500;
   }
 
   .meta {
-    font-size: 0.8rem;
-    color: var(--color-text-tertiary);
-    margin-bottom: 0.4rem;
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-bottom: 8px;
     display: flex;
     align-items: center;
     gap: 0.4rem;
   }
 
   .dot {
-    color: var(--color-border);
+    opacity: 0.5;
   }
 
   h3 {
-    font-size: 1.1rem;
-    margin-bottom: 0.5rem;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 15px;
+    color: var(--text-primary);
+    line-height: 1.4;
+    font-weight: 400;
+    margin-bottom: 10px;
   }
 
   h3 a {
-    color: var(--color-text-primary);
+    color: var(--text-primary);
     text-decoration: none;
   }
 
   h3 a:hover {
     color: var(--color-accent);
-    text-decoration: none;
   }
 
   .tags {
     display: flex;
     flex-wrap: wrap;
     gap: 0.4rem;
-    margin-top: 0.5rem;
   }
 </style>

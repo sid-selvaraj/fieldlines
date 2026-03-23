@@ -1,26 +1,63 @@
 :root {
+  /* Design tokens */
   --color-accent: #7F77DD;
-  --color-accent-light: #EEEDFE;
+  --color-accent-light: #f7f6fe;
+  --color-accent-mid: #AFA9EC;
+  --hero-bg: #f7f7f4;
+  --card-bg: #fafaf8;
+  --page-bg: #fdfdfc;
+  --border-color: #e8e8e4;
+  --border-card: #eeeee8;
+  --text-primary: #1a1a1a;
+  --text-secondary: #666666;
+  --text-tertiary: #aaaaaa;
+
+  /* Backward-compat aliases used in existing component <style> blocks */
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-bg: var(--page-bg);
+  --color-bg-secondary: var(--card-bg);
+  --color-border: var(--border-color);
+
+  /* Typography */
   --font-serif: Georgia, 'Times New Roman', serif;
   --font-sans: system-ui, sans-serif;
   --font-mono: 'Courier New', monospace;
-  --color-text-primary: #1a1a1a;
-  --color-text-secondary: #555;
-  --color-text-tertiary: #999;
-  --color-border: rgba(0,0,0,0.1);
-  --color-bg: #ffffff;
-  --color-bg-secondary: #f9f9f7;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-text-primary: #e8e8e8;
-    --color-text-secondary: #aaa;
-    --color-text-tertiary: #666;
-    --color-border: rgba(255,255,255,0.1);
-    --color-bg: #111111;
-    --color-bg-secondary: #1a1a1a;
-    --color-accent-light: #2a2850;
+    --color-accent: #9990e8;
+    --color-accent-light: #1e1a3a;
+    --hero-bg: #141414;
+    --card-bg: #1a1a1a;
+    --page-bg: #111111;
+    --border-color: #2a2a2a;
+    --border-card: #222222;
+    --text-primary: #f0f0f0;
+    --text-secondary: #999999;
+    --text-tertiary: #555555;
+  }
+
+  .badge-draft {
+    background: #2a2a28;
+    color: #888;
+  }
+
+  .badge-in-progress {
+    background: var(--color-accent-light);
+    color: var(--color-accent);
+  }
+
+  .badge-published {
+    background: #0d2b21;
+    color: #4ecb9e;
+  }
+
+  .entry-type-tag {
+    background: var(--color-accent-light) !important;
+    color: var(--color-accent) !important;
   }
 }
 
@@ -31,13 +68,13 @@
 }
 
 html {
-  font-size: 18px;
+  font-size: 16px;
 }
 
 body {
   font-family: var(--font-sans);
-  color: var(--color-text-primary);
-  background-color: var(--color-bg);
+  color: var(--text-primary);
+  background-color: var(--page-bg);
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
   display: flex;
@@ -46,9 +83,9 @@ body {
 
 main {
   flex: 1;
-  max-width: 900px;
+  max-width: 720px;
   margin: 0 auto;
-  padding: 3rem 1.5rem;
+  padding: 0 24px;
   width: 100%;
 }
 
@@ -56,7 +93,7 @@ h1, h2, h3, h4 {
   font-family: var(--font-serif);
   font-weight: normal;
   line-height: 1.25;
-  color: var(--color-text-primary);
+  color: var(--text-primary);
 }
 
 a {
@@ -70,26 +107,26 @@ a:hover {
 
 p {
   line-height: 1.7;
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
 }
 
 hr {
   border: none;
-  border-top: 1px solid var(--color-border);
+  border-top: 1px solid var(--border-color);
   margin: 2.5rem 0;
 }
 
 code {
   font-family: var(--font-mono);
   font-size: 0.875em;
-  background: var(--color-bg-secondary);
+  background: var(--card-bg);
   padding: 0.1em 0.3em;
   border-radius: 3px;
 }
 
 pre {
-  background: var(--color-bg-secondary);
-  border: 1px solid var(--color-border);
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   padding: 1rem 1.25rem;
   overflow-x: auto;
@@ -127,7 +164,7 @@ pre code {
 
 .prose li {
   line-height: 1.7;
-  color: var(--color-text-secondary);
+  color: var(--text-secondary);
   margin-bottom: 0.25rem;
 }
 
@@ -135,42 +172,62 @@ pre code {
   margin-bottom: 1.5rem;
 }
 
-/* Tag styles */
+/* Tag pills */
 .tag {
   display: inline-block;
-  font-size: 0.7rem;
+  font-size: 11px;
   font-family: var(--font-mono);
   letter-spacing: 0.03em;
-  color: var(--color-text-tertiary);
-  border: 1px solid var(--color-border);
+  color: var(--text-tertiary);
+  border: 1px solid var(--border-color);
   border-radius: 3px;
   padding: 0.1em 0.4em;
 }
 
-/* Status badge styles */
+/* Status badges */
 .badge {
   display: inline-block;
-  font-size: 0.7rem;
+  font-size: 10px;
   font-family: var(--font-sans);
-  font-weight: 600;
-  letter-spacing: 0.05em;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 20px;
   text-transform: uppercase;
-  border-radius: 3px;
-  padding: 0.15em 0.5em;
+  letter-spacing: 0.04em;
 }
 
 .badge-draft {
-  background: var(--color-bg-secondary);
-  color: var(--color-text-tertiary);
-  border: 1px solid var(--color-border);
+  background: #F1EFE8;
+  color: #5F5E5A;
 }
 
 .badge-in-progress {
-  background: var(--color-accent-light);
-  color: var(--color-accent);
+  background: #EEEDFE;
+  color: #3C3489;
 }
 
 .badge-published {
-  background: var(--color-accent);
-  color: #fff;
+  background: #E1F5EE;
+  color: #085041;
+}
+
+/* Section label — used across all pages */
+.section-label {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  font-weight: 500;
+  margin-bottom: 12px;
+  line-height: 1;
+}
+
+.section-label::after {
+  content: '';
+  display: block;
+  height: 1px;
+  background: var(--border-color);
+  margin-top: 12px;
+  margin-bottom: 16px;
 }

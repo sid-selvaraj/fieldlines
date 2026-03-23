@@ -16,6 +16,7 @@ posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
     </p>
   </div>
 
+  <h2 class="section-label">All Essays</h2>
   <div class="list">
     {posts.map(post => (
       <PostCard
@@ -31,16 +32,20 @@ posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
 <style>
   .page-header {
-    margin-bottom: 2rem;
+    padding-top: 40px;
+    margin-bottom: 32px;
   }
 
   h1 {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
+    font-size: 28px;
+    margin-bottom: 8px;
+    color: var(--text-primary);
   }
 
   p {
-    color: var(--color-text-secondary);
-    max-width: 580px;
+    font-size: 14px;
+    color: var(--text-secondary);
+    max-width: 520px;
+    line-height: 1.6;
   }
 </style>
