@@ -7,8 +7,6 @@ award: "Freshman Participation Certificate"
 category: "Physics"
 description: "Investigating how muons survive the journey through Earth's atmosphere — a mathematical exploration of time dilation and length contraction as complementary descriptions of the same relativistic phenomenon."
 tags: ["Special Relativity", "Muons", "Time Dilation", "Lorentz Factor", "Cosmic Rays", "TNJSF", "ISEF"]
-heroImage: "/journal/tnjsf-2026/poster.jpg"
-images: ["/journal/tnjsf-2026/poster.jpg"]
 pdfAttachment: "/journal/tnjsf-2026/muon-paradox-poster.pdf"
 featured: true
 ---
