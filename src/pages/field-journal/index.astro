@@ -1,0 +1,165 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+
+<Base title="Field Journal">
+  <div class="page-header">
+    <p class="eyebrow">Field Journal</p>
+    <h1>Physics in the wild.</h1>
+    <p class="desc">
+      A record of science fairs, competitions, lab visits, and experiments — the
+      moments where curiosity meets the real world.
+    </p>
+  </div>
+
+  <h2 class="section-label">Featured</h2>
+
+  <div class="entry-card">
+    <div class="badges">
+      <span class="badge outline">Terra New Jersey STEM Fair</span>
+      <span class="badge yellow">ISEF Affiliated</span>
+    </div>
+    <div class="meta">March 22, 2026 · New Jersey</div>
+    <h3>The Muon Paradox: Evidence of Special Relativity in Nature</h3>
+    <p class="summary">
+      Investigating how muons survive the journey through Earth's atmosphere — a mathematical
+      exploration of time dilation and length contraction as complementary descriptions of the same
+      relativistic phenomenon.
+    </p>
+    <div class="tags">
+      <code>Special Relativity</code>
+      <code>Muons</code>
+      <code>Time Dilation</code>
+      <code>Lorentz Factor</code>
+      <code>Cosmic Rays</code>
+      <code>TNJSF</code>
+      <code>ISEF</code>
+    </div>
+    <div class="actions">
+      <a href="#" class="read-link">Read entry →</a>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .page-header {
+    padding-top: 40px;
+    margin-bottom: 32px;
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    font-weight: 500;
+    margin-bottom: 12px;
+    font-family: var(--font-sans);
+  }
+
+  h1 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 32px;
+    font-weight: 400;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+  }
+
+  .desc {
+    font-size: 14px;
+    color: var(--text-secondary);
+    max-width: 520px;
+    line-height: 1.6;
+  }
+
+  .entry-card {
+    border: 1px solid var(--border-card);
+    border-radius: 10px;
+    padding: 24px 28px;
+    background: var(--card-bg);
+    margin-bottom: 32px;
+  }
+
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .badge {
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-family: var(--font-sans);
+    font-weight: 500;
+  }
+
+  .badge.outline {
+    border: 1px solid var(--border-card);
+    color: var(--text-secondary);
+    background: transparent;
+  }
+
+  .badge.yellow {
+    background: #fef9c3;
+    color: #a16207;
+    border: 1px solid #fde68a;
+  }
+
+  .meta {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin-bottom: 10px;
+    font-family: var(--font-sans);
+  }
+
+  h3 {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+    line-height: 1.35;
+  }
+
+  .summary {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 16px;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+
+  .tags code {
+    font-size: 11px;
+    padding: 2px 8px;
+    border: 1px solid var(--border-card);
+    border-radius: 4px;
+    color: var(--text-tertiary);
+    background: transparent;
+    font-family: var(--font-mono);
+  }
+
+  .actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .read-link {
+    font-size: 13px;
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .read-link:hover {
+    text-decoration: underline;
+  }
+</style>
