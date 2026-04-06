@@ -1,7 +1,7 @@
 ---
 title: "The Muon Paradox: Evidence of Special Relativity in Nature"
 date: 2026-03-22
-event: "The New Jersey Science Fair (TNJSF)"
+event: "Terra North Jersey Science Fair (TNJSF)"
 location: "New Jersey"
 award: "Freshman Participation Certificate"
 category: "Physics"
