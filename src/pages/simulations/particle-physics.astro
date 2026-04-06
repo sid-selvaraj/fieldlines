@@ -1,0 +1,64 @@
+---
+import Base from '../../layouts/Base.astro';
+---
+
+<Base title="Particle Physics Explorer">
+  <article>
+    <a href="/simulations" class="back">← Simulations</a>
+    <h1>Particle Physics Explorer</h1>
+    <p class="desc">
+      Explore the Standard Model, build Feynman diagrams, and test your knowledge of fundamental
+      particles.
+    </p>
+  </article>
+  <div class="sim-wrap">
+    <iframe
+      src="/simulations/particle-physics-explorer.html"
+      title="Particle Physics Explorer"
+      allowfullscreen
+    ></iframe>
+  </div>
+</Base>
+
+<style>
+  article {
+    padding-top: 40px;
+    margin-bottom: 24px;
+  }
+
+  .back {
+    display: inline-block;
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    margin-bottom: 1.5rem;
+    text-decoration: none;
+  }
+
+  .back:hover {
+    color: var(--color-accent);
+  }
+
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .desc {
+    color: var(--color-text-secondary);
+    max-width: 520px;
+  }
+
+  .sim-wrap {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+    height: 85vh;
+    min-height: 600px;
+  }
+
+  .sim-wrap iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+  }
+</style>
