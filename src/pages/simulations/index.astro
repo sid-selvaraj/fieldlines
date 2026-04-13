@@ -4,6 +4,13 @@ import SimCard from '../../components/SimCard.astro';
 
 const simulations = [
   {
+    title: 'Particle Physics Explorer',
+    description:
+      'Explore the Standard Model, drag particles into Feynman diagrams, and quiz yourself on the fundamental building blocks of matter.',
+    href: '/simulations/particle-physics',
+    status: '⬡ Explore',
+  },
+  {
     title: 'Double-Slit Experiment',
     description:
       'Interactive wave-particle duality simulation with adjustable slit separation and wavelength.',
@@ -13,12 +20,6 @@ const simulations = [
     title: 'Electric Field Visualizer',
     description: 'Place charges and watch field lines emerge in real time.',
     href: '/simulations/electric-field',
-  },
-  {
-    title: 'Particle Physics Explorer',
-    description:
-      'Explore the Standard Model, drag particles into Feynman diagrams, and quiz yourself on the fundamental building blocks of matter.',
-    href: '/simulations/particle-physics',
   },
 ];
 ---
@@ -35,7 +36,7 @@ const simulations = [
   <h2 class="section-label">All Simulations</h2>
   <div class="grid">
     {simulations.map(sim => (
-      <SimCard title={sim.title} description={sim.description} href={sim.href} />
+      <SimCard title={sim.title} description={sim.description} href={sim.href} status={sim.status} />
     ))}
   </div>
 </Base>
