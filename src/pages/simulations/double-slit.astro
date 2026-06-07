@@ -7,20 +7,351 @@ import Base from '../../layouts/Base.astro';
     <a href="/simulations" class="back">← Simulations</a>
     <h1>Double-Slit Experiment</h1>
     <p class="desc">
-      Interactive wave-particle duality simulation with adjustable slit separation and wavelength.
+      Interactive wave interference simulator. Adjust the slit width, separation, and wavelength to explore how waves create interference patterns.
     </p>
     <hr />
-    <div class="placeholder">
-      <p class="label">Simulation in progress</p>
-      <p class="note">
-        I'm building a Canvas-based implementation of the double-slit interference pattern. The
-        plan is to allow real-time adjustment of slit width, slit separation, and incident
-        wavelength, and to visualize both the wave function and the probability distribution on the
-        detector screen.
-      </p>
+
+    <div class="simulation-container">
+      <div class="controls-section">
+        <div class="control-group">
+          <label for="wavelength">Wavelength (λ): <span id="wavelength-value">500</span> nm</label>
+          <input type="range" id="wavelength" min="300" max="800" value="500" class="slider" />
+          <div class="control-info">Visible light range: 380–700 nm</div>
+        </div>
+
+        <div class="control-group">
+          <label for="slit-width">Slit Width (a): <span id="slit-width-value">20</span> μm</label>
+          <input type="range" id="slit-width" min="5" max="80" value="20" step="1" class="slider" />
+          <div class="control-info">Smaller slits = wider diffraction pattern</div>
+        </div>
+
+        <div class="control-group">
+          <label for="slit-separation">Slit Separation (d): <span id="slit-separation-value">100</span> μm</label>
+          <input type="range" id="slit-separation" min="50" max="300" value="100" step="5" class="slider" />
+          <div class="control-info">Larger separation = closer fringes</div>
+        </div>
+
+        <button id="reset-btn" class="reset-button">Reset to defaults</button>
+      </div>
+
+      <div class="visualization-section">
+        <div class="canvas-container">
+          <canvas id="simulation-canvas"></canvas>
+          <div class="canvas-labels">
+            <div class="label left">Slits</div>
+            <div class="label right">Detector Screen</div>
+          </div>
+        </div>
+
+        <div class="pattern-section">
+          <h3>Intensity Pattern</h3>
+          <canvas id="pattern-canvas"></canvas>
+          <div class="pattern-info">
+            <span class="info-label">Dark regions</span>
+            <span class="info-label">Bright fringes</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="equations-section">
+        <h3>Key Equations</h3>
+        <div class="equation-box">
+          <p><strong>Path difference:</strong> Δ = d sin(θ)</p>
+        </div>
+        <div class="equation-box">
+          <p><strong>Constructive interference:</strong> Δ = mλ (m = 0, ±1, ±2, ...)</p>
+        </div>
+        <div class="equation-box">
+          <p><strong>Destructive interference:</strong> Δ = (m + ½)λ</p>
+        </div>
+        <div class="equation-box">
+          <p><strong>Fringe spacing:</strong> Δy = λL/d</p>
+          <div class="equation-note">L = distance to screen, d = slit separation</div>
+        </div>
+        <div class="equation-box">
+          <p><strong>Single-slit diffraction minima:</strong> a sin(θ) = nλ (n = ±1, ±2, ...)</p>
+          <div class="equation-note">a = slit width. These minima modulate the double-slit pattern.</div>
+        </div>
+      </div>
+
+      <div class="info-section">
+        <h3>What You're Seeing</h3>
+        <p>
+          This simulation shows the <strong>Fraunhofer diffraction pattern</strong> from two slits. When
+          waves pass through both slits, they interfere:
+        </p>
+        <ul>
+          <li>
+            <strong>Bright fringes:</strong> Occur where waves from both slits arrive in phase
+            (constructive interference)
+          </li>
+          <li>
+            <strong>Dark fringes:</strong> Occur where waves from the two slits are out of phase by
+            ½ wavelength or more (destructive interference)
+          </li>
+          <li>
+            <strong>Envelope:</strong> The overall intensity is modulated by single-slit diffraction,
+            which creates the envelope that decreases away from the center
+          </li>
+        </ul>
+        <p>
+          Try adjusting the slits: smaller slit width → wider envelope; larger separation → closer
+          fringes. At very large slit widths, the diffraction pattern narrows and the fringes become
+          more prominent. This experiment demonstrates wave nature—particles couldn't produce this
+          pattern.
+        </p>
+      </div>
     </div>
   </article>
 </Base>
+
+<script>
+  class DoubleSlit {
+    private wavelength: number = 500; // nm
+    private slitWidth: number = 20; // μm
+    private slitSeparation: number = 100; // μm
+    private canvas: HTMLCanvasElement;
+    private ctx: CanvasRenderingContext2D;
+    private patternCanvas: HTMLCanvasElement;
+    private patternCtx: CanvasRenderingContext2D;
+    private width: number;
+    private height: number;
+
+    constructor() {
+      this.canvas = document.getElementById('simulation-canvas') as HTMLCanvasElement;
+      this.ctx = this.canvas.getContext('2d')!;
+      this.patternCanvas = document.getElementById('pattern-canvas') as HTMLCanvasElement;
+      this.patternCtx = this.patternCanvas.getContext('2d')!;
+
+      this.width = this.canvas.offsetWidth;
+      this.height = this.canvas.offsetHeight;
+      this.canvas.width = this.width;
+      this.canvas.height = this.height;
+
+      this.patternCanvas.width = this.patternCanvas.offsetWidth;
+      this.patternCanvas.height = 120;
+
+      this.setupControls();
+      this.draw();
+    }
+
+    private setupControls(): void {
+      const wavelengthInput = document.getElementById('wavelength') as HTMLInputElement;
+      const slitWidthInput = document.getElementById('slit-width') as HTMLInputElement;
+      const slitSeparationInput = document.getElementById('slit-separation') as HTMLInputElement;
+      const resetBtn = document.getElementById('reset-btn') as HTMLButtonElement;
+
+      wavelengthInput.addEventListener('input', (e) => {
+        this.wavelength = parseInt((e.target as HTMLInputElement).value);
+        document.getElementById('wavelength-value')!.textContent = this.wavelength.toString();
+        this.draw();
+      });
+
+      slitWidthInput.addEventListener('input', (e) => {
+        this.slitWidth = parseInt((e.target as HTMLInputElement).value);
+        document.getElementById('slit-width-value')!.textContent = this.slitWidth.toString();
+        this.draw();
+      });
+
+      slitSeparationInput.addEventListener('input', (e) => {
+        this.slitSeparation = parseInt((e.target as HTMLInputElement).value);
+        document.getElementById('slit-separation-value')!.textContent = this.slitSeparation.toString();
+        this.draw();
+      });
+
+      resetBtn.addEventListener('click', () => {
+        this.wavelength = 500;
+        this.slitWidth = 20;
+        this.slitSeparation = 100;
+        wavelengthInput.value = '500';
+        slitWidthInput.value = '20';
+        slitSeparationInput.value = '100';
+        document.getElementById('wavelength-value')!.textContent = '500';
+        document.getElementById('slit-width-value')!.textContent = '20';
+        document.getElementById('slit-separation-value')!.textContent = '100';
+        this.draw();
+      });
+    }
+
+    private draw(): void {
+      this.drawSetup();
+      this.drawPattern();
+    }
+
+    private drawSetup(): void {
+      this.ctx.fillStyle = '#f5f5f1';
+      this.ctx.fillRect(0, 0, this.width, this.height);
+
+      const slitSpacing = (this.height * 0.6) / 2;
+      const centerY = this.height / 2;
+      const slitX = this.width * 0.15;
+      const screenX = this.width * 0.85;
+
+      // Grid background
+      this.ctx.strokeStyle = 'rgba(200, 200, 200, 0.3)';
+      this.ctx.lineWidth = 0.5;
+      for (let i = 0; i < this.width; i += 20) {
+        this.ctx.beginPath();
+        this.ctx.moveTo(i, 0);
+        this.ctx.lineTo(i, this.height);
+        this.ctx.stroke();
+      }
+      for (let i = 0; i < this.height; i += 20) {
+        this.ctx.beginPath();
+        this.ctx.moveTo(0, i);
+        this.ctx.lineTo(this.width, i);
+        this.ctx.stroke();
+      }
+
+      // Draw slits
+      const slitHeightPixels = (this.slitWidth / 100) * this.height * 0.3;
+      const slitSepPixels = (this.slitSeparation / 100) * this.height * 0.3;
+
+      const slit1Y = centerY - slitSepPixels / 2;
+      const slit2Y = centerY + slitSepPixels / 2;
+
+      this.ctx.fillStyle = '#7F77DD';
+      this.ctx.fillRect(slitX - 3, slit1Y - slitHeightPixels / 2, 6, slitHeightPixels);
+      this.ctx.fillRect(slitX - 3, slit2Y - slitHeightPixels / 2, 6, slitHeightPixels);
+
+      // Draw screen
+      this.ctx.strokeStyle = '#333';
+      this.ctx.lineWidth = 3;
+      this.ctx.beginPath();
+      this.ctx.moveTo(screenX, this.height * 0.15);
+      this.ctx.lineTo(screenX, this.height * 0.85);
+      this.ctx.stroke();
+
+      // Draw intensity pattern on screen
+      const screenHeight = this.height * 0.7;
+      const screenY = centerY - screenHeight / 2;
+      const distance = screenX - slitX;
+
+      for (let py = 0; py < screenHeight; py++) {
+        const screenPos = screenY + py;
+        const y = (screenPos - centerY) / (this.height * 0.3);
+
+        let intensity = 0;
+
+        for (let phase = 0; phase < Math.PI * 2; phase += 0.05) {
+          const angle = Math.atan2(y, distance);
+
+          // Path difference
+          const pathDiff =
+            this.slitSeparation * Math.sin(angle) +
+            (this.slitWidth / 2) * Math.sin(angle + phase);
+
+          // Wave amplitude from both slits
+          const k = (2 * Math.PI * this.wavelength) / 1000;
+          const waveFactor1 = Math.cos(k * (this.slitSeparation / 2) * Math.sin(angle));
+          const waveFactor2 = Math.cos(k * (-this.slitSeparation / 2) * Math.sin(angle));
+
+          // Single-slit envelope
+          const singleSlitArg = (Math.PI * this.slitWidth * Math.sin(angle)) / this.wavelength;
+          let envelope = 1;
+          if (Math.abs(singleSlitArg) > 0.01) {
+            envelope = Math.sin(singleSlitArg) / singleSlitArg;
+          }
+          envelope = envelope * envelope;
+
+          intensity += (waveFactor1 + waveFactor2) * envelope;
+        }
+
+        intensity = Math.abs(intensity) / 50;
+        intensity = Math.min(1, intensity);
+
+        const wavelengthColor = this.getWavelengthColor(this.wavelength);
+        const colorIntensity = Math.pow(intensity, 0.5);
+        this.ctx.fillStyle = this.adjustColorIntensity(wavelengthColor, colorIntensity);
+        this.ctx.fillRect(screenX, screenPos, 15, 1);
+      }
+
+      // Draw labels
+      this.ctx.fillStyle = '#666';
+      this.ctx.font = '12px sans-serif';
+      this.ctx.textAlign = 'center';
+      this.ctx.fillText(`λ = ${this.wavelength} nm`, this.width / 2, 25);
+      this.ctx.fillText(
+        `a = ${this.slitWidth} μm, d = ${this.slitSeparation} μm`,
+        this.width / 2,
+        45
+      );
+    }
+
+    private drawPattern(): void {
+      this.patternCtx.fillStyle = '#f5f5f1';
+      this.patternCtx.fillRect(0, 0, this.patternCanvas.width, this.patternCanvas.height);
+
+      const centerY = this.patternCanvas.height / 2;
+      const k = (2 * Math.PI * this.wavelength) / 1000;
+
+      for (let px = 0; px < this.patternCanvas.width; px++) {
+        const normalizedY = ((px / this.patternCanvas.width) * 4 - 2) * 100;
+        const angle = Math.atan2(normalizedY, 1000);
+
+        // Calculate intensity
+        const pathDiff = this.slitSeparation * Math.sin(angle);
+        const doubleSlit =
+          Math.cos((k * pathDiff) / 2) * Math.cos((k * pathDiff) / 2);
+
+        // Single-slit envelope
+        const singleSlitArg = (Math.PI * this.slitWidth * Math.sin(angle)) / this.wavelength;
+        let envelope = 1;
+        if (Math.abs(singleSlitArg) > 0.01) {
+          envelope = Math.sin(singleSlitArg) / singleSlitArg;
+        }
+        envelope = envelope * envelope;
+
+        let intensity = doubleSlit * envelope * 4;
+        intensity = Math.min(1, Math.pow(intensity, 0.5));
+
+        const wavelengthColor = this.getWavelengthColor(this.wavelength);
+        this.patternCtx.fillStyle = this.adjustColorIntensity(wavelengthColor, intensity);
+        this.patternCtx.fillRect(px, 0, 1, this.patternCanvas.height);
+      }
+
+      // Draw center line
+      this.patternCtx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+      this.patternCtx.lineWidth = 1;
+      this.patternCtx.beginPath();
+      this.patternCtx.moveTo(this.patternCanvas.width / 2, 0);
+      this.patternCtx.lineTo(this.patternCanvas.width / 2, this.patternCanvas.height);
+      this.patternCtx.stroke();
+    }
+
+    private getWavelengthColor(wavelength: number): [number, number, number] {
+      if (wavelength < 380 || wavelength > 700) {
+        return [150, 150, 150];
+      } else if (wavelength < 450) {
+        return [138, 43, 226]; // Violet
+      } else if (wavelength < 495) {
+        return [75, 0, 130]; // Indigo
+      } else if (wavelength < 570) {
+        return [0, 128, 255]; // Blue-Green
+      } else if (wavelength < 590) {
+        return [0, 200, 0]; // Green
+      } else if (wavelength < 620) {
+        return [255, 255, 0]; // Yellow
+      } else if (wavelength < 750) {
+        return [255, 165, 0]; // Orange-Red
+      } else {
+        return [255, 0, 0]; // Red
+      }
+    }
+
+    private adjustColorIntensity(
+      rgb: [number, number, number],
+      intensity: number
+    ): string {
+      const r = Math.round(rgb[0] + (255 - rgb[0]) * (1 - intensity));
+      const g = Math.round(rgb[1] + (255 - rgb[1]) * (1 - intensity));
+      const b = Math.round(rgb[2] + (255 - rgb[2]) * (1 - intensity));
+      return `rgb(${r}, ${g}, ${b})`;
+    }
+  }
+
+  new DoubleSlit();
+</script>
 
 <style>
   .back {
@@ -45,28 +376,220 @@ import Base from '../../layouts/Base.astro';
     max-width: 520px;
   }
 
-  .placeholder {
-    background: var(--color-bg-secondary);
-    border: 1px dashed var(--color-border);
-    border-radius: 4px;
-    padding: 3.5rem 2rem;
-    text-align: center;
+  .simulation-container {
+    margin-top: 2rem;
   }
 
-  .label {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: var(--color-text-tertiary);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
+  .controls-section {
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .control-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .control-group:last-of-type {
     margin-bottom: 1rem;
   }
 
-  .note {
+  label {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  .slider {
+    width: 100%;
+    max-width: 400px;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--color-border);
+    outline: none;
+    -webkit-appearance: none;
+  }
+
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .control-info {
+    font-size: 0.8rem;
+    color: var(--color-text-tertiary);
+    margin-top: 0.4rem;
+  }
+
+  .reset-button {
+    padding: 0.6rem 1.2rem;
+    background: var(--color-accent);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
     font-size: 0.9rem;
+    font-weight: 500;
+    transition: opacity 0.2s;
+  }
+
+  .reset-button:hover {
+    opacity: 0.9;
+  }
+
+  .visualization-section {
+    margin-bottom: 2rem;
+  }
+
+  .canvas-container {
+    position: relative;
+    margin-bottom: 2rem;
+  }
+
+  #simulation-canvas {
+    width: 100%;
+    height: auto;
+    display: block;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: white;
+  }
+
+  .canvas-labels {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    font-size: 0.85rem;
+    color: var(--color-text-tertiary);
+  }
+
+  .label {
+    font-weight: 500;
+  }
+
+  .pattern-section {
+    margin-top: 2rem;
+  }
+
+  .pattern-section h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.8rem;
+    color: var(--color-text-primary);
+  }
+
+  #pattern-canvas {
+    width: 100%;
+    height: auto;
+    display: block;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: white;
+    margin-bottom: 0.8rem;
+  }
+
+  .pattern-info {
+    display: flex;
+    gap: 2rem;
+    font-size: 0.85rem;
     color: var(--color-text-secondary);
-    max-width: 460px;
-    margin: 0 auto;
-    line-height: 1.7;
+  }
+
+  .info-label {
+    display: inline-block;
+    padding: 4px 8px;
+    background: rgba(127, 119, 221, 0.1);
+    border-radius: 4px;
+  }
+
+  .equations-section {
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .equations-section h3 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: var(--color-text-primary);
+  }
+
+  .equation-box {
+    background: white;
+    border-left: 3px solid var(--color-accent);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+  }
+
+  .equation-box p {
+    margin: 0;
+    font-family: 'Courier New', monospace;
+    font-size: 0.95rem;
+    color: var(--color-text-primary);
+  }
+
+  .equation-note {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    margin-top: 0.5rem;
+    font-family: var(--font-sans);
+  }
+
+  .info-section {
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: 1.5rem;
+  }
+
+  .info-section h3 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: var(--color-text-primary);
+  }
+
+  .info-section p {
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  .info-section ul {
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .info-section li {
+    margin-bottom: 0.6rem;
+    font-size: 0.95rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  .info-section strong {
+    color: var(--color-text-primary);
   }
 </style>
