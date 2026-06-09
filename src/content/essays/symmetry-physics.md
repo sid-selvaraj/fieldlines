@@ -7,7 +7,7 @@ tags: [symmetry, Noether, foundations]
 
 Ask a physicist to name the most important concept in their field and there's a good chance they'll say: symmetry.
 
-Not because physicists like beautiful patterns (though they do). But because the laws of nature are *derived from* symmetry principles. The fundamental forces — electromagnetism, the weak force, the strong force — are all consequences of requiring the theory to have certain symmetries.
+Not because physicists like beautiful patterns (though they do). But because the laws of nature are *derived from* symmetry principles. The fundamental force: electromagnetism, the weak force, the strong force — are all consequences of requiring the theory to have certain symmetries.
 
 ## Noether's Theorem
 
