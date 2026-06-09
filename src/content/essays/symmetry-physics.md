@@ -21,11 +21,11 @@ This is not just a pattern. It's a theorem. The conservation laws you learn in h
 
 ## Gauge Symmetry
 
-The deeper and more abstract application is gauge symmetry. Electromagnetism, it turns out, can be derived by requiring the equations of quantum mechanics to be invariant under a certain type of transformation — multiplying the wavefunction by a complex phase that can vary from point to point in space.
+The deeper and more abstract application is gauge symmetry. Electromagnetism, it turns out, can be derived by requiring the equations of quantum mechanics to be invariant under a certain type of transformation. Multiplying the wavefunction by a complex phase that can vary from point to point in space.
 
-When you demand this "local" phase symmetry, the mathematics forces you to introduce a new field: the electromagnetic field. The photon emerges as a consequence of the symmetry requirement.
+When you demand this "local" phase symmetry, the mathematics forces you to introduce a new field: the electromagnetic field. The photon emerges as a consequence of the symmetry requirement of this field.
 
-The same logic, applied to larger symmetry groups, generates the weak and strong forces. The Standard Model's entire structure is SU(3) × SU(2) × U(1) — three symmetry groups that dictate the behavior of all known forces except gravity.
+The same logic, applied to larger symmetry groups, generates the weak and strong fundamental forces. The Standard Model's entire structure is SU(3) × SU(2) × U(1). The three symmetry groups that dictate the behavior of all known forces except gravity.
 
 ## What This Means
 
@@ -33,8 +33,8 @@ The implication is philosophically staggering: the forces of nature are not brut
 
 ## The Puzzle of Broken Symmetry
 
-Of course, some symmetries are broken. The electroweak theory unifies electromagnetism and the weak force, which have very different apparent properties. The Higgs mechanism breaks the symmetry spontaneously — the equations have the symmetry, but the ground state of the universe doesn't.
+Of course, some symmetries are broken. The electroweak theory unifies electromagnetism and the weak force, which have very different apparent properties. The Higgs mechanism breaks the symmetry spontaneously. The equations have the symmetry, but the ground state of the universe doesn't.
 
-This is why I keep coming back to symmetry as the organizing idea. Even where it's broken, the breaking is *systematic* and tells us something about the history of the universe — specifically, what happened in the first fractions of a second after the Big Bang, when temperatures were high enough for the symmetry to be restored.
+This is why I keep coming back to symmetry as the organizing idea. Even where it's broken, the breaking is *systematic* and tells us something about the history of the universe. Specifically, what happened in the first fractions of a second after the Big Bang, when temperatures were high enough for the symmetry to be restored.
 
 Understanding symmetry doesn't just explain particles. It explains why the universe has the structure it has.
