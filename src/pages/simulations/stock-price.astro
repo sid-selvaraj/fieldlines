@@ -1,0 +1,162 @@
+---
+import Base from '../../layouts/Base.astro';
+import StockPredictor from '../../components/StockPredictor';
+---
+
+<Base title="LSTM Stock Price Prediction">
+  <article>
+    <header class="post-header">
+      <h1>LSTM Stock Price Prediction</h1>
+      <p class="subtitle">
+        An interactive neural network model for forecasting stock prices using Long Short-Term Memory networks.
+      </p>
+    </header>
+    <hr />
+    <div class="prose">
+      <p>
+        This simulation implements an LSTM (Long Short Term Memory) neural network trained on historical stock price data to forecast future closing prices. Select any stock ticker and watch as the model predicts price movements based on 30-day historical sequences.
+      </p>
+
+      <h2>How It Works</h2>
+      <p>
+        The model processes historical daily closing prices through a normalization pipeline, creates 30-day sequences as input features, and trains a stacked 2-layer LSTM with 32 hidden units. After training on 80% of the data, it makes predictions on unseen test data and evaluates performance using RMSE (Root Mean Squared Error).
+      </p>
+
+      <h3>Key Components</h3>
+      <ul>
+        <li><strong>Data Source:</strong> Historical daily stock prices via yfinance</li>
+        <li><strong>Normalization:</strong> StandardScaler for zero mean, unit variance</li>
+        <li><strong>Sequencing:</strong> 30-day sliding windows for temporal patterns</li>
+        <li><strong>Architecture:</strong> 2-layer LSTM (32 hidden units) with linear output layer</li>
+        <li><strong>Training:</strong> Adam optimizer, MSE loss, 100 epochs on train set</li>
+        <li><strong>Evaluation:</strong> RMSE metric on test set, visualization of predictions vs actual</li>
+      </ul>
+
+      <h3>Try Different Stocks</h3>
+      <p>
+        Enter any publicly traded stock ticker (e.g., AAPL, GOOGL, TSLA, MSFT, AMZN) to see how the model performs across different companies. The model adapts to each stock's unique price distribution through normalization.
+      </p>
+    </div>
+
+    <div class="simulator-container">
+      <StockPredictor client:load />
+    </div>
+
+    <hr />
+    <div class="prose">
+      <h2>Important Disclaimer</h2>
+      <p>
+        <strong>This is a demonstration model for educational purposes only.</strong> Machine learning predictions of financial markets come with significant limitations:
+      </p>
+      <ul>
+        <li>Historical patterns do not guarantee future performance</li>
+        <li>Market behavior is influenced by countless unpredictable events</li>
+        <li>This model does not account for market sentiment, news, or economic indicators</li>
+        <li>Overfitting to historical data can lead to poor real-world predictions</li>
+      </ul>
+      <p>
+        <strong>Never make real financial decisions based solely on this model.</strong> Always conduct thorough research, diversify your portfolio, and consult with qualified financial advisors.
+      </p>
+    </div>
+
+    <a href="/simulations" class="back-link">← Back to Simulations</a>
+  </article>
+</Base>
+
+<style>
+  article {
+    padding-top: 40px;
+    padding-bottom: 48px;
+  }
+
+  .post-header {
+    margin-bottom: 1.5rem;
+  }
+
+  h1 {
+    font-size: 28px;
+    margin-bottom: 16px;
+    line-height: 1.2;
+    color: var(--text-primary);
+  }
+
+  .subtitle {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 0;
+  }
+
+  .prose {
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  .prose h2 {
+    font-size: 20px;
+    margin-top: 28px;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+  }
+
+  .prose h3 {
+    font-size: 16px;
+    margin-top: 20px;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+  }
+
+  .prose p {
+    margin-bottom: 16px;
+  }
+
+  .prose ul {
+    margin-left: 20px;
+    margin-bottom: 16px;
+  }
+
+  .prose li {
+    margin-bottom: 8px;
+  }
+
+  .simulator-container {
+    margin: 40px 0;
+    padding: 24px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-card);
+    border-radius: 12px;
+  }
+
+  .back-link {
+    font-size: 13px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 24px;
+  }
+
+  .back-link:hover {
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 32px 0;
+  }
+
+  @media (max-width: 600px) {
+    h1 {
+      font-size: 22px;
+    }
+
+    .simulator-container {
+      padding: 16px;
+      margin: 24px -24px;
+      border-radius: 0;
+      border-left: none;
+      border-right: none;
+    }
+  }
+</style>
