@@ -42,4 +42,24 @@ const journal = defineCollection({
   }),
 });
 
-export const collections = { research, essays, journal };
+const experiences = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/experiences' }),
+  schema: z.object({
+    title: z.string(),
+    date: z.date(),
+    readTime: z.number(),
+    tags: z.array(z.string()),
+  }),
+});
+
+const simulations = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/simulations' }),
+  schema: z.object({
+    title: z.string(),
+    date: z.date(),
+    description: z.string().optional(),
+    tags: z.array(z.string()),
+  }),
+});
+
+export const collections = { research, essays, journal, experiences, simulations };

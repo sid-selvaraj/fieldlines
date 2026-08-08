@@ -1,8 +1,12 @@
 ---
 import Base from '../../layouts/Base.astro';
 import SimCard from '../../components/SimCard.astro';
+import { getCollection } from 'astro:content';
 
-const simulations = [
+const contentSims = await getCollection('simulations');
+contentSims.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const staticSims = [
   {
     title: 'Particle Physics Explorer',
     description:
@@ -10,6 +14,16 @@ const simulations = [
     href: '/simulations/particle-physics',
     status: '⬡ Explore',
   },
+];
+
+const allSims = [
+  ...staticSims,
+  ...contentSims.map(sim => ({
+    title: sim.data.title,
+    description: sim.data.description || 'An interactive physics simulation.',
+    href: `/simulations/${sim.id}`,
+    status: '⬡ Explore',
+  })),
 ];
 ---
 
@@ -24,7 +38,7 @@ const simulations = [
 
   <h2 class="section-label">All Simulations</h2>
   <div class="grid">
-    {simulations.map(sim => (
+    {allSims.map(sim => (
       <SimCard title={sim.title} description={sim.description} href={sim.href} status={sim.status} />
     ))}
   </div>

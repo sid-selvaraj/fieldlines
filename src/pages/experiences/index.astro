@@ -1,0 +1,51 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+
+const posts = await getCollection('experiences');
+posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<Base title="Experiences">
+  <div class="page-header">
+    <h1>Experiences</h1>
+    <p>
+      Stories, reflections, and lessons from competitions, simulations, and personal experiences
+      in physics, sports, and learning.
+    </p>
+  </div>
+
+  <h2 class="section-label">All Experiences</h2>
+  <div class="list">
+    {posts.map(post => (
+      <PostCard
+        title={post.data.title}
+        date={post.data.date}
+        readTime={post.data.readTime}
+        tags={post.data.tags}
+        slug={post.id}
+      />
+    ))}
+  </div>
+</Base>
+
+<style>
+  .page-header {
+    padding-top: 40px;
+    margin-bottom: 32px;
+  }
+
+  h1 {
+    font-size: 28px;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+  }
+
+  p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    max-width: 520px;
+    line-height: 1.6;
+  }
+</style>
