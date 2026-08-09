@@ -1,6 +1,6 @@
 ---
-title: "MLS Next Experience: Virginia"
-date: 2026-05-15
+title: "MLS Next: Virginia and Utah"
+date: 2026-06-01
 readTime: 8
 tags: [soccer, competition, mentality, learning]
 ---

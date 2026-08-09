@@ -5,9 +5,10 @@ interface Props {
   readTime: number;
   tags: string[];
   slug: string;
+  section?: 'essays' | 'experiences';
 }
 
-const { title, date, readTime, tags, slug } = Astro.props;
+const { title, date, readTime, tags, slug, section = 'essays' } = Astro.props;
 
 const formattedDate = date.toLocaleDateString('en-US', {
   year: 'numeric',
@@ -17,14 +18,14 @@ const formattedDate = date.toLocaleDateString('en-US', {
 ---
 
 <article>
-  <div class="card-type">Essay</div>
+  <div class="card-type">{section === 'experiences' ? 'Experience' : 'Essay'}</div>
   <div class="meta">
     <time datetime={date.toISOString()}>{formattedDate}</time>
     <span class="dot">·</span>
     <span>{readTime} min read</span>
   </div>
   <h3>
-    <a href={`/essays/${slug}`}>{title}</a>
+    <a href={`/${section}/${slug}`}>{title}</a>
   </h3>
   <div class="tags">
     {tags.map(tag => <span class="tag">{tag}</span>)}
