@@ -38,6 +38,19 @@ const formattedDate = date.toLocaleDateString('en-US', {
   </article>
 </Base>
 
+<script>
+  declare global {
+    interface Window {
+      MathJax: any;
+    }
+  }
+
+  if (typeof window !== 'undefined' && window.MathJax) {
+    window.MathJax.contentDocument = document;
+    window.MathJax.typesetPromise?.().catch(() => {});
+  }
+</script>
+
 <style>
   article {
     padding-top: 40px;
