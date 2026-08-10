@@ -85,98 +85,84 @@ export default function StockPredictor() {
   };
 
   useEffect(() => {
-    if (data && typeof window !== 'undefined') {
-      renderChart();
-    }
-  }, [data]);
+    if (!data || typeof window === 'undefined') return;
 
-  const renderChart = () => {
-    if (!data) return;
-
-    const attemptRender = () => {
+    const waitForPlotly = (retries = 0) => {
       if (!window.Plotly) {
-        setTimeout(attemptRender, 100);
+        if (retries < 50) {
+          setTimeout(() => waitForPlotly(retries + 1), 100);
+        }
         return;
       }
 
-      const traceActual = {
-        x: data.dates,
-        y: data.actual,
-        name: 'Actual Price',
-        type: 'scatter',
-        mode: 'lines',
-        line: { color: '#1a73e8', width: 2 },
-      };
+      try {
+        const traceActual = {
+          x: data.dates,
+          y: data.actual,
+          name: 'Actual Price',
+          type: 'scatter',
+          mode: 'lines',
+          line: { color: '#1a73e8', width: 2 },
+        };
 
-      const tracePredicted = {
-        x: data.dates,
-        y: data.predicted,
-        name: 'Predicted Price',
-        type: 'scatter',
-        mode: 'lines',
-        line: { color: '#34a853', width: 2 },
-      };
+        const tracePredicted = {
+          x: data.dates,
+          y: data.predicted,
+          name: 'Predicted Price',
+          type: 'scatter',
+          mode: 'lines',
+          line: { color: '#34a853', width: 2 },
+        };
 
-      const layout = {
-        title: `${ticker} Stock Price Prediction`,
-        xaxis: { title: 'Date' },
-        yaxis: { title: 'Price (USD)' },
-        hovermode: 'x unified',
-        plot_bgcolor: '#f7f7f4',
-        paper_bgcolor: '#fdfdfc',
-        font: { family: 'system-ui, sans-serif', color: '#1a1a1a' },
-        margin: { l: 60, r: 40, t: 60, b: 40 },
-      };
+        const layout = {
+          title: `${ticker} Stock Price Prediction`,
+          xaxis: { title: 'Date' },
+          yaxis: { title: 'Price (USD)' },
+          hovermode: 'x unified',
+          plot_bgcolor: '#f7f7f4',
+          paper_bgcolor: '#fdfdfc',
+          font: { family: 'Inter, sans-serif', color: '#1a1a1a' },
+          margin: { l: 60, r: 40, t: 60, b: 40 },
+        };
 
-      window.Plotly.newPlot('price-chart', [traceActual, tracePredicted], layout, {
-        responsive: true,
-      });
+        window.Plotly.newPlot('price-chart', [traceActual, tracePredicted], layout, {
+          responsive: true,
+        });
 
-      renderErrorChart();
-    };
+        // Render error chart
+        const errorTrace = {
+          x: data.dates,
+          y: data.error,
+          name: 'Absolute Error',
+          type: 'scatter',
+          mode: 'lines',
+          fill: 'tozeroy',
+          line: { color: '#ea4335' },
+          fillcolor: 'rgba(234, 67, 53, 0.2)',
+        };
 
-    attemptRender();
-  };
+        const errorLayout = {
+          title: 'Prediction Error Over Time',
+          xaxis: { title: 'Date' },
+          yaxis: { title: 'Error (USD)' },
+          hovermode: 'x unified',
+          plot_bgcolor: '#f7f7f4',
+          paper_bgcolor: '#fdfdfc',
+          font: { family: 'Inter, sans-serif', color: '#1a1a1a' },
+          margin: { l: 60, r: 40, t: 60, b: 40 },
+          showlegend: false,
+        };
 
-  const renderErrorChart = () => {
-    if (!data) return;
-
-    const attemptRender = () => {
-      if (!window.Plotly) {
-        setTimeout(attemptRender, 100);
-        return;
+        window.Plotly.newPlot('error-chart', [errorTrace], errorLayout, {
+          responsive: true,
+        });
+      } catch (err) {
+        console.error('Chart rendering error:', err);
       }
-
-      const trace = {
-        x: data.dates,
-        y: data.error,
-        name: 'Absolute Error',
-        type: 'scatter',
-        mode: 'lines',
-        fill: 'tozeroy',
-        line: { color: '#ea4335' },
-        fillcolor: 'rgba(234, 67, 53, 0.2)',
-      };
-
-      const layout = {
-        title: 'Prediction Error Over Time',
-        xaxis: { title: 'Date' },
-        yaxis: { title: 'Error (USD)' },
-        hovermode: 'x unified',
-        plot_bgcolor: '#f7f7f4',
-        paper_bgcolor: '#fdfdfc',
-        font: { family: 'system-ui, sans-serif', color: '#1a1a1a' },
-        margin: { l: 60, r: 40, t: 60, b: 40 },
-        showlegend: false,
-      };
-
-      window.Plotly.newPlot('error-chart', [trace], layout, {
-        responsive: true,
-      });
     };
 
-    attemptRender();
-  };
+    waitForPlotly();
+  }, [data, ticker]);
 
   return (
     <div className="stock-predictor">
@@ -287,26 +273,29 @@ export default function StockPredictor() {
           top: 100%;
           left: 0;
           right: 0;
-          background: #fdfdfc;
-          border: 1px solid #e8e8e4;
+          background: #ffffff;
+          border: 1px solid #cccccc;
           border-top: none;
           border-radius: 0 0 8px 8px;
           z-index: 10;
           max-height: 200px;
           overflow-y: auto;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .suggestion-item {
-          padding: 10px 14px;
+          padding: 12px 14px;
           cursor: pointer;
-          border-bottom: 1px solid #f0f0ec;
+          border-bottom: 1px solid #eeeeee;
           font-size: 14px;
-          color: #1a1a1a;
+          font-weight: 500;
+          color: #222222;
         }
 
         .suggestion-item:hover {
-          background: #f7f7f4;
+          background: #f0f0f0;
           color: #7f77dd;
+          font-weight: 600;
         }
 
         .suggestion-item:last-child {
