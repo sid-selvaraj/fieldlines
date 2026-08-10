@@ -48,7 +48,7 @@ export default function StockPredictor() {
 
   const selectStock = (symbol: string) => {
     setTicker(symbol);
-    setInputValue('');
+    setInputValue(symbol);
     setSuggestions([]);
     fetchPrediction(symbol);
   };
@@ -87,15 +87,22 @@ export default function StockPredictor() {
   useEffect(() => {
     if (!data || typeof window === 'undefined') return;
 
-    const waitForPlotly = (retries = 0) => {
+    const renderCharts = () => {
       if (!window.Plotly) {
-        if (retries < 50) {
-          setTimeout(() => waitForPlotly(retries + 1), 100);
-        }
+        setTimeout(renderCharts, 100);
         return;
       }
 
       try {
+        // Verify divs exist
+        const priceChartDiv = document.getElementById('price-chart');
+        const errorChartDiv = document.getElementById('error-chart');
+
+        if (!priceChartDiv || !errorChartDiv) {
+          console.error('Chart container divs not found');
+          return;
+        }
+
         const traceActual = {
           x: data.dates,
           y: data.actual,
@@ -125,7 +132,7 @@ export default function StockPredictor() {
           margin: { l: 60, r: 40, t: 60, b: 40 },
         };
 
-        window.Plotly.newPlot('price-chart', [traceActual, tracePredicted], layout, {
+        window.Plotly.newPlot(priceChartDiv, [traceActual, tracePredicted], layout, {
           responsive: true,
         });
 
@@ -153,7 +160,7 @@ export default function StockPredictor() {
           showlegend: false,
         };
 
-        window.Plotly.newPlot('error-chart', [errorTrace], errorLayout, {
+        window.Plotly.newPlot(errorChartDiv, [errorTrace], errorLayout, {
           responsive: true,
         });
       } catch (err) {
@@ -161,7 +168,7 @@ export default function StockPredictor() {
       }
     };
 
-    waitForPlotly();
+    renderCharts();
   }, [data, ticker]);
 
   return (
@@ -273,23 +280,23 @@ export default function StockPredictor() {
           top: 100%;
           left: 0;
           right: 0;
-          background: #ffffff;
-          border: 1px solid #cccccc;
+          background: #ede9ff;
+          border: 1px solid #9f96d4;
           border-top: none;
           border-radius: 0 0 8px 8px;
           z-index: 10;
           max-height: 200px;
           overflow-y: auto;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 4px 12px rgba(127, 119, 221, 0.2);
         }
 
         .suggestion-item {
           padding: 12px 14px;
           cursor: pointer;
-          border-bottom: 1px solid #eeeeee;
+          border-bottom: 1px solid #d9d0f5;
           font-size: 14px;
-          font-weight: 500;
-          color: #222222;
+          font-weight: 700;
+          color: #1a1a1a;
         }
 
         .suggestion-item:hover {
