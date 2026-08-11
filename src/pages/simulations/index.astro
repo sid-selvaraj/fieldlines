@@ -13,6 +13,7 @@ const staticSims = [
       'Explore the Standard Model, drag particles into Feynman diagrams, and quiz yourself on the fundamental building blocks of matter.',
     href: '/simulations/particle-physics',
     status: '⬡ Explore',
+    image: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"><defs><linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:%235b4fa3;stop-opacity:1" /><stop offset="100%" style="stop-color:%237f77dd;stop-opacity:1" /></linearGradient></defs><rect width="400" height="300" fill="url(%23grad1)"/><circle cx="80" cy="80" r="15" fill="rgba(255,255,255,0.3)"/><circle cx="320" cy="220" r="25" fill="rgba(255,255,255,0.2)"/><circle cx="200" cy="150" r="12" fill="rgba(255,255,255,0.4)"/></svg>',
   },
   {
     title: 'LSTM Stock Price Prediction',
@@ -20,6 +21,7 @@ const staticSims = [
       'Interactive neural network model for forecasting stock prices using Long Short-Term Memory networks. Enter any stock ticker to see predictions.',
     href: '/simulations/stock-price',
     status: '⬡ Explore',
+    image: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"><defs><linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:%23ede9ff;stop-opacity:1" /><stop offset="100%" style="stop-color:%23d4c9f5;stop-opacity:1" /></linearGradient></defs><rect width="400" height="300" fill="url(%23grad2)"/><polyline points="30,200 80,150 130,180 180,100 230,140 280,80 320,120 370,60" stroke="%237f77dd" stroke-width="2" fill="none"/><polyline points="30,210 80,160 130,190 180,110 230,150 280,90 320,130 370,70" stroke="%235b4fa3" stroke-width="2" fill="none" opacity="0.5"/></svg>',
   },
 ];
 
@@ -30,6 +32,7 @@ const allSims = [
     description: sim.data.description || 'An interactive physics simulation.',
     href: `/simulations/${sim.id}`,
     status: '⬡ Explore',
+    image: undefined,
   })),
 ];
 ---
@@ -46,7 +49,7 @@ const allSims = [
   <h2 class="section-label">All Simulations</h2>
   <div class="grid">
     {allSims.map(sim => (
-      <SimCard title={sim.title} description={sim.description} href={sim.href} status={sim.status} />
+      <SimCard title={sim.title} description={sim.description} href={sim.href} status={sim.status} image={sim.image} />
     ))}
   </div>
 </Base>

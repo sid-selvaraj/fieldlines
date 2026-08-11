@@ -146,18 +146,22 @@ pre code {
   margin-top: 2rem;
   margin-bottom: 0.75rem;
   font-size: 1.5rem;
-  font-family: var(--font-sans);
-  font-weight: 600;
+  font-family: var(--font-serif);
+  font-weight: normal;
+  color: var(--text-primary);
 }
 
 .prose h3 {
   margin-top: 1.5rem;
   margin-bottom: 0.5rem;
   font-size: 1.2rem;
+  font-family: var(--font-serif);
+  font-weight: normal;
+  color: var(--text-primary);
 }
 
 .prose p {
-  margin-bottom: 0.9rem;
+  margin-bottom: 0.6rem;
 }
 
 .prose ul,

@@ -94,22 +94,13 @@ export default function StockPredictor() {
       }
 
       try {
-        // Verify divs exist
-        const priceChartDiv = document.getElementById('price-chart');
-        const errorChartDiv = document.getElementById('error-chart');
-
-        if (!priceChartDiv || !errorChartDiv) {
-          console.error('Chart container divs not found');
-          return;
-        }
-
         const traceActual = {
           x: data.dates,
           y: data.actual,
           name: 'Actual Price',
           type: 'scatter',
           mode: 'lines',
-          line: { color: '#1a73e8', width: 2 },
+          line: { color: '#5b4fa3', width: 2.5 },
         };
 
         const tracePredicted = {
@@ -118,21 +109,23 @@ export default function StockPredictor() {
           name: 'Predicted Price',
           type: 'scatter',
           mode: 'lines',
-          line: { color: '#34a853', width: 2 },
+          line: { color: '#7f77dd', width: 2.5 },
+          opacity: 0.8,
         };
 
         const layout = {
           title: `${ticker} Stock Price Prediction`,
-          xaxis: { title: 'Date' },
-          yaxis: { title: 'Price (USD)' },
+          xaxis: { title: 'Date', color: '#666666' },
+          yaxis: { title: 'Price (USD)', color: '#666666' },
           hovermode: 'x unified',
-          plot_bgcolor: '#f7f7f4',
+          plot_bgcolor: '#f5f3fb',
           paper_bgcolor: '#fdfdfc',
-          font: { family: 'Inter, sans-serif', color: '#1a1a1a' },
+          font: { family: 'Inter, sans-serif', color: '#1a1a1a', size: 12 },
           margin: { l: 60, r: 40, t: 60, b: 40 },
+          title: { font: { size: 16, color: '#1a1a1a' } },
         };
 
-        window.Plotly.newPlot(priceChartDiv, [traceActual, tracePredicted], layout, {
+        window.Plotly.newPlot('price-chart', [traceActual, tracePredicted], layout, {
           responsive: true,
         });
 
@@ -144,23 +137,24 @@ export default function StockPredictor() {
           type: 'scatter',
           mode: 'lines',
           fill: 'tozeroy',
-          line: { color: '#ea4335' },
-          fillcolor: 'rgba(234, 67, 53, 0.2)',
+          line: { color: '#9f77dd', width: 2 },
+          fillcolor: 'rgba(159, 119, 221, 0.15)',
         };
 
         const errorLayout = {
           title: 'Prediction Error Over Time',
-          xaxis: { title: 'Date' },
-          yaxis: { title: 'Error (USD)' },
+          xaxis: { title: 'Date', color: '#666666' },
+          yaxis: { title: 'Error (USD)', color: '#666666' },
           hovermode: 'x unified',
-          plot_bgcolor: '#f7f7f4',
+          plot_bgcolor: '#f5f3fb',
           paper_bgcolor: '#fdfdfc',
-          font: { family: 'Inter, sans-serif', color: '#1a1a1a' },
+          font: { family: 'Inter, sans-serif', color: '#1a1a1a', size: 12 },
           margin: { l: 60, r: 40, t: 60, b: 40 },
           showlegend: false,
+          title: { font: { size: 16, color: '#1a1a1a' } },
         };
 
-        window.Plotly.newPlot(errorChartDiv, [errorTrace], errorLayout, {
+        window.Plotly.newPlot('error-chart', [errorTrace], errorLayout, {
           responsive: true,
         });
       } catch (err) {

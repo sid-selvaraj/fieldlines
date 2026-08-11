@@ -4,14 +4,16 @@ interface Props {
   description: string;
   href: string;
   status?: string;
+  image?: string;
 }
 
-const { title, description, href, status = 'Coming Soon' } = Astro.props;
+const { title, description, href, status = 'Coming Soon', image } = Astro.props;
 ---
 
 <a href={href} class="sim-card">
-  <div class="preview">
-    <span class="status-label">{status}</span>
+  <div class="preview" style={image ? `background-image: url('${image}'); background-size: cover; background-position: center;` : ''}>
+    {!image && <span class="status-label">{status}</span>}
+    {image && <span class="status-label overlay">{status}</span>}
   </div>
   <div class="body">
     <div class="card-type">Simulation</div>
@@ -44,6 +46,7 @@ const { title, description, href, status = 'Coming Soon' } = Astro.props;
     align-items: center;
     justify-content: center;
     border-bottom: 1px solid var(--border-card);
+    position: relative;
   }
 
   .status-label {
@@ -52,6 +55,15 @@ const { title, description, href, status = 'Coming Soon' } = Astro.props;
     color: var(--text-tertiary);
     letter-spacing: 0.1em;
     text-transform: uppercase;
+  }
+
+  .status-label.overlay {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+    padding: 4px 8px;
+    border-radius: 4px;
+    backdrop-filter: blur(4px);
   }
 
   .body {
@@ -69,9 +81,9 @@ const { title, description, href, status = 'Coming Soon' } = Astro.props;
   }
 
   h3 {
-    font-family: Georgia, 'Times New Roman', serif;
+    font-family: var(--font-serif);
     font-size: 15px;
-    font-weight: 400;
+    font-weight: normal;
     color: var(--text-primary);
     line-height: 1.4;
     margin-bottom: 8px;
