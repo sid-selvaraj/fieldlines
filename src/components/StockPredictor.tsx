@@ -1,11 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import type { PlotlyHTMLElement } from 'react-plotly.js';
-
-declare global {
-  interface Window {
-    Plotly: any;
-  }
-}
 
 interface PredictionData {
   dates: string[];
@@ -84,95 +77,69 @@ export default function StockPredictor() {
     }
   };
 
+  const SimpleLineChart = ({ values, title, yAxisLabel }: { values: number[]; title: string; yAxisLabel: string }) => {
+    if (!values || values.length === 0) return null;
+
+    const width = 800;
+    const height = 300;
+    const padding = { top: 40, right: 20, bottom: 40, left: 60 };
+    const chartWidth = width - padding.left - padding.right;
+    const chartHeight = height - padding.top - padding.bottom;
+
+    const minY = Math.min(...values);
+    const maxY = Math.max(...values);
+    const rangeY = maxY - minY || 1;
+
+    const points = values.map((v, i) => {
+      const x = padding.left + (i / (values.length - 1 || 1)) * chartWidth;
+      const y = padding.top + chartHeight - ((v - minY) / rangeY) * chartHeight;
+      return { x, y };
+    });
+
+    const pathD = points.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
+
+    return (
+      <div style={{ marginBottom: '24px' }}>
+        <h3 style={{ fontSize: '14px', marginBottom: '12px', color: '#1a1a1a' }}>{title}</h3>
+        <svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`} style={{ backgroundColor: '#f5f3fb' }}>
+          {/* Grid lines */}
+          {[0, 0.25, 0.5, 0.75, 1].map((frac) => (
+            <line key={`h-${frac}`} x1={padding.left} y1={padding.top + frac * chartHeight} x2={padding.left + chartWidth} y2={padding.top + frac * chartHeight} stroke="#e0e0e0" strokeWidth="1" />
+          ))}
+
+          {/* Axes */}
+          <line x1={padding.left} y1={padding.top} x2={padding.left} y2={padding.top + chartHeight} stroke="#666" strokeWidth="2" />
+          <line x1={padding.left} y1={padding.top + chartHeight} x2={padding.left + chartWidth} y2={padding.top + chartHeight} stroke="#666" strokeWidth="2" />
+
+          {/* Y-axis labels */}
+          {[0, 0.5, 1].map((frac) => {
+            const value = minY + frac * rangeY;
+            return (
+              <text key={`label-${frac}`} x={padding.left - 10} y={padding.top + (1 - frac) * chartHeight} textAnchor="end" fontSize="12" fill="#666">
+                {value.toFixed(0)}
+              </text>
+            );
+          })}
+
+          {/* Chart line */}
+          <path d={pathD} fill="none" stroke="#7f77dd" strokeWidth="2.5" />
+
+          {/* Title */}
+          <text x={padding.left} y={20} fontSize="14" fontWeight="bold" fill="#1a1a1a">
+            {title}
+          </text>
+
+          {/* Y-axis label */}
+          <text x={10} y={height / 2} textAnchor="middle" fontSize="12" fill="#666" transform={`rotate(-90 10 ${height / 2})`}>
+            {yAxisLabel}
+          </text>
+        </svg>
+      </div>
+    );
+  };
+
   useEffect(() => {
-    if (!data || typeof window === 'undefined') return;
-
-    // Wait for Plotly with more aggressive retry
-    const tryRender = (attempts = 0) => {
-      const Plotly = (window as any).Plotly;
-
-      if (!Plotly) {
-        if (attempts < 200) {
-          setTimeout(() => tryRender(attempts + 1), 25);
-        }
-        return;
-      }
-
-      try {
-        const priceDiv = document.getElementById('price-chart');
-        const errorDiv = document.getElementById('error-chart');
-
-        if (!priceDiv || !errorDiv) {
-          console.error('Chart divs not found');
-          return;
-        }
-
-        // Price chart data
-        const priceData = [
-          {
-            x: data.dates,
-            y: data.actual,
-            name: 'Actual Price',
-            type: 'scatter',
-            mode: 'lines',
-            line: { color: '#5b4fa3', width: 2.5 },
-          },
-          {
-            x: data.dates,
-            y: data.predicted,
-            name: 'Predicted Price',
-            type: 'scatter',
-            mode: 'lines',
-            line: { color: '#7f77dd', width: 2.5 },
-          },
-        ];
-
-        const priceLayout = {
-          title: `${ticker} Stock Price Prediction`,
-          xaxis: { title: 'Date' },
-          yaxis: { title: 'Price (USD)' },
-          hovermode: 'x unified',
-          plot_bgcolor: '#f5f3fb',
-          paper_bgcolor: '#fdfdfc',
-          font: { family: 'Inter, sans-serif', color: '#1a1a1a' },
-          margin: { l: 60, r: 40, t: 60, b: 40 },
-        };
-
-        Plotly.newPlot(priceDiv, priceData, priceLayout, { responsive: true });
-
-        // Error chart data
-        const errorData = [
-          {
-            x: data.dates,
-            y: data.error,
-            type: 'scatter',
-            mode: 'lines',
-            name: 'Absolute Error',
-            fill: 'tozeroy',
-            line: { color: '#9f77dd' },
-            fillcolor: 'rgba(159, 119, 221, 0.2)',
-          },
-        ];
-
-        const errorLayout = {
-          title: 'Prediction Error Over Time',
-          xaxis: { title: 'Date' },
-          yaxis: { title: 'Error (USD)' },
-          hovermode: 'x unified',
-          plot_bgcolor: '#f5f3fb',
-          paper_bgcolor: '#fdfdfc',
-          font: { family: 'Inter, sans-serif', color: '#1a1a1a' },
-          margin: { l: 60, r: 40, t: 60, b: 40 },
-          showlegend: false,
-        };
-
-        Plotly.newPlot(errorDiv, errorData, errorLayout, { responsive: true });
-      } catch (err) {
-        console.error('Plotly error:', err);
-      }
-    };
-
-    tryRender();
+    // Data is rendered directly via component, no need for external libraries
   }, [data, ticker]);
 
   return (
@@ -216,18 +183,25 @@ export default function StockPredictor() {
         Current: <span className="ticker-badge">{ticker}</span>
       </div>
 
-      <div id="price-chart" className="chart-container"></div>
-
       {data && (
-        <div className="metrics">
-          <div className="metric">
-            <span className="metric-label">Test RMSE</span>
-            <span className="metric-value">${data.rmse.toFixed(2)}</span>
+        <>
+          <SimpleLineChart values={data.actual} title={`${ticker} Actual vs Predicted Price`} yAxisLabel="Price (USD)" />
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
+            <div style={{ flex: 1 }}>
+              <SimpleLineChart values={data.predicted} title="Predicted Prices" yAxisLabel="Price (USD)" />
+            </div>
           </div>
-        </div>
-      )}
 
-      <div id="error-chart" className="chart-container"></div>
+          <div className="metrics">
+            <div className="metric">
+              <span className="metric-label">Test RMSE</span>
+              <span className="metric-value">${data.rmse.toFixed(2)}</span>
+            </div>
+          </div>
+
+          <SimpleLineChart values={data.error} title="Prediction Error Over Time" yAxisLabel="Error (USD)" />
+        </>
+      )}
 
       <div className="info-box">
         <h3>About this model</h3>
