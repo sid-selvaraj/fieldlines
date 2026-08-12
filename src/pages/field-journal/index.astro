@@ -1,5 +1,9 @@
 ---
 import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const entries = await getCollection('journal');
+entries.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 ---
 
 <Base title="Field Journal">
@@ -12,33 +16,36 @@ import Base from '../../layouts/Base.astro';
     </p>
   </div>
 
-  <h2 class="section-label">Featured</h2>
+  <h2 class="section-label">Field Journal Entries</h2>
 
-  <div class="entry-card">
-    <div class="badges">
-      <span class="badge outline">Terra New Jersey STEM Fair</span>
-      <span class="badge yellow">ISEF Affiliated</span>
+  {entries.map(entry => (
+    <div class="entry-card">
+      <div class="badges">
+        {entry.data.event && (
+          <span class="badge outline">{entry.data.event}</span>
+        )}
+        {entry.data.tags?.includes('ISEF') && (
+          <span class="badge yellow">ISEF Affiliated</span>
+        )}
+      </div>
+      <div class="meta">
+        {entry.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+        {entry.data.location && <span> · {entry.data.location}</span>}
+      </div>
+      <h3>{entry.data.title}</h3>
+      <p class="summary">
+        {entry.data.description}
+      </p>
+      <div class="tags">
+        {entry.data.tags?.map(tag => (
+          <code>{tag}</code>
+        ))}
+      </div>
+      <div class="actions">
+        <a href={`/journal/${entry.id}`} class="read-link">Read entry →</a>
+      </div>
     </div>
-    <div class="meta">March 22, 2026 · New Jersey</div>
-    <h3>The Muon Paradox: Evidence of Special Relativity in Nature</h3>
-    <p class="summary">
-      Investigating how muons survive the journey through Earth's atmosphere — a mathematical
-      exploration of time dilation and length contraction as complementary descriptions of the same
-      relativistic phenomenon.
-    </p>
-    <div class="tags">
-      <code>Special Relativity</code>
-      <code>Muons</code>
-      <code>Time Dilation</code>
-      <code>Lorentz Factor</code>
-      <code>Cosmic Rays</code>
-      <code>TNJSF</code>
-      <code>ISEF</code>
-    </div>
-    <div class="actions">
-      <a href="#" class="read-link">Read entry →</a>
-    </div>
-  </div>
+  ))}
 </Base>
 
 <style>
