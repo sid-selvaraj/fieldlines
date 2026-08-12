@@ -87,82 +87,92 @@ export default function StockPredictor() {
   useEffect(() => {
     if (!data || typeof window === 'undefined') return;
 
-    const renderCharts = () => {
-      if (!window.Plotly) {
-        setTimeout(renderCharts, 100);
+    // Wait for Plotly with more aggressive retry
+    const tryRender = (attempts = 0) => {
+      const Plotly = (window as any).Plotly;
+
+      if (!Plotly) {
+        if (attempts < 200) {
+          setTimeout(() => tryRender(attempts + 1), 25);
+        }
         return;
       }
 
       try {
-        const traceActual = {
-          x: data.dates,
-          y: data.actual,
-          name: 'Actual Price',
-          type: 'scatter',
-          mode: 'lines',
-          line: { color: '#5b4fa3', width: 2.5 },
-        };
+        const priceDiv = document.getElementById('price-chart');
+        const errorDiv = document.getElementById('error-chart');
 
-        const tracePredicted = {
-          x: data.dates,
-          y: data.predicted,
-          name: 'Predicted Price',
-          type: 'scatter',
-          mode: 'lines',
-          line: { color: '#7f77dd', width: 2.5 },
-          opacity: 0.8,
-        };
+        if (!priceDiv || !errorDiv) {
+          console.error('Chart divs not found');
+          return;
+        }
 
-        const layout = {
+        // Price chart data
+        const priceData = [
+          {
+            x: data.dates,
+            y: data.actual,
+            name: 'Actual Price',
+            type: 'scatter',
+            mode: 'lines',
+            line: { color: '#5b4fa3', width: 2.5 },
+          },
+          {
+            x: data.dates,
+            y: data.predicted,
+            name: 'Predicted Price',
+            type: 'scatter',
+            mode: 'lines',
+            line: { color: '#7f77dd', width: 2.5 },
+          },
+        ];
+
+        const priceLayout = {
           title: `${ticker} Stock Price Prediction`,
-          xaxis: { title: 'Date', color: '#666666' },
-          yaxis: { title: 'Price (USD)', color: '#666666' },
+          xaxis: { title: 'Date' },
+          yaxis: { title: 'Price (USD)' },
           hovermode: 'x unified',
           plot_bgcolor: '#f5f3fb',
           paper_bgcolor: '#fdfdfc',
-          font: { family: 'Inter, sans-serif', color: '#1a1a1a', size: 12 },
+          font: { family: 'Inter, sans-serif', color: '#1a1a1a' },
           margin: { l: 60, r: 40, t: 60, b: 40 },
-          title: { font: { size: 16, color: '#1a1a1a' } },
         };
 
-        window.Plotly.newPlot('price-chart', [traceActual, tracePredicted], layout, {
-          responsive: true,
-        });
+        Plotly.newPlot(priceDiv, priceData, priceLayout, { responsive: true });
 
-        // Render error chart
-        const errorTrace = {
-          x: data.dates,
-          y: data.error,
-          name: 'Absolute Error',
-          type: 'scatter',
-          mode: 'lines',
-          fill: 'tozeroy',
-          line: { color: '#9f77dd', width: 2 },
-          fillcolor: 'rgba(159, 119, 221, 0.15)',
-        };
+        // Error chart data
+        const errorData = [
+          {
+            x: data.dates,
+            y: data.error,
+            type: 'scatter',
+            mode: 'lines',
+            name: 'Absolute Error',
+            fill: 'tozeroy',
+            line: { color: '#9f77dd' },
+            fillcolor: 'rgba(159, 119, 221, 0.2)',
+          },
+        ];
 
         const errorLayout = {
           title: 'Prediction Error Over Time',
-          xaxis: { title: 'Date', color: '#666666' },
-          yaxis: { title: 'Error (USD)', color: '#666666' },
+          xaxis: { title: 'Date' },
+          yaxis: { title: 'Error (USD)' },
           hovermode: 'x unified',
           plot_bgcolor: '#f5f3fb',
           paper_bgcolor: '#fdfdfc',
-          font: { family: 'Inter, sans-serif', color: '#1a1a1a', size: 12 },
+          font: { family: 'Inter, sans-serif', color: '#1a1a1a' },
           margin: { l: 60, r: 40, t: 60, b: 40 },
           showlegend: false,
-          title: { font: { size: 16, color: '#1a1a1a' } },
         };
 
-        window.Plotly.newPlot('error-chart', [errorTrace], errorLayout, {
-          responsive: true,
-        });
+        Plotly.newPlot(errorDiv, errorData, errorLayout, { responsive: true });
       } catch (err) {
-        console.error('Chart rendering error:', err);
+        console.error('Plotly error:', err);
       }
     };
 
-    renderCharts();
+    tryRender();
   }, [data, ticker]);
 
   return (
